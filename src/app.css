@@ -1,0 +1,441 @@
+@import 'tailwindcss';
+
+@theme inline {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-sidebar: var(--sidebar);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-ring: var(--sidebar-ring);
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+}
+
+/* Slate, the Radix ramp, light. Kept as --g1..--g12 so a second theme is a
+ * second block and nothing downstream changes. */
+:root {
+	/* The light ramp is the app's own, not Radix's slate. Slate on a light
+	   page is a cold lilac grey, with a hair between the page and what lies
+	   on it, so that nothing stood off anything else. This one leans a little
+	   to the sage that is the app's colour, and has room in it: 1 is paper
+	   white, for what is lifted (a card, a menu, the text box); 2 is the page;
+	   3 is the sidebar and anything set back; and text (11, 12) is a step
+	   deeper than slate's, to read on all three. */
+	--g1: oklch(1 0 0);
+	--g2: oklch(0.986 0.003 140);
+	--g3: oklch(0.962 0.006 140);
+	--g4: oklch(0.932 0.007 140);
+	--g5: oklch(0.908 0.008 140);
+	--g6: oklch(0.878 0.009 140);
+	--g7: oklch(0.836 0.011 140);
+	--g8: oklch(0.77 0.013 140);
+	--g9: oklch(0.62 0.014 140);
+	--g10: oklch(0.57 0.014 140);
+	--g11: oklch(0.455 0.014 140);
+	--g12: oklch(0.215 0.012 140);
+	--radius: 0.5rem;
+}
+
+.dark {
+	--g1: oklch(0.179 0.0041 286);
+	--g2: oklch(0.213 0.0044 286);
+	--g3: oklch(0.255 0.0065 286.1);
+	--g4: oklch(0.284 0.0084 286.1);
+	--g5: oklch(0.314 0.0092 286.2);
+	--g6: oklch(0.351 0.0102 286.2);
+	--g7: oklch(0.408 0.0125 286.3);
+	--g8: oklch(0.498 0.0161 281.7);
+	--g9: oklch(0.537 0.0153 262.3);
+	--g10: oklch(0.585 0.0143 267.5);
+	--g11: oklch(0.769 0.0113 267.9);
+	--g12: oklch(0.949 0.0022 286.4);
+}
+
+/* Layer 2 — semantic mapping, written once. Radix step roles are symmetric
+ * across modes, so 11 is muted text and 12 is primary text in both. */
+:root {
+	/* The one colour that is the app's own, a sage: its mark, a sign that something changed. */
+	--brand: #b3c7a1;
+	--foreground: var(--g12);
+	--card-foreground: var(--g12);
+	--popover-foreground: var(--g12);
+	--secondary: var(--g3);
+	--secondary-foreground: var(--g12);
+	--muted: var(--g3);
+	--muted-foreground: var(--g11);
+	--accent: var(--g4);
+	--accent-foreground: var(--g12);
+	--border: var(--g6);
+	--input: var(--g7);
+	--ring: var(--g8);
+	--primary: var(--g12);
+	--primary-foreground: var(--g1);
+	--destructive: oklch(0.626 0.193 23);
+	--destructive-foreground: var(--g1);
+	--sidebar-foreground: var(--g12);
+	--sidebar-primary: var(--g12);
+	--sidebar-primary-foreground: var(--g1);
+	--sidebar-accent: var(--g4);
+	--sidebar-accent-foreground: var(--g12);
+	--sidebar-border: var(--g6);
+	--sidebar-ring: var(--g8);
+}
+
+/* Elevation is the one thing that differs by mode: light lifts cards toward
+ * white off a tinted page, dark lifts them away from black. */
+:root:not(.dark) {
+	--background: var(--g2);
+	--card: var(--g1);
+	--popover: var(--g1);
+	--sidebar: var(--g3);
+	/* The sage, deep enough to be seen on a light page: the one on a dark page is nearly the page's own colour here. */
+	--brand: oklch(0.56 0.075 135);
+}
+
+.dark {
+	--background: var(--g1);
+	--card: var(--g2);
+	--popover: var(--g3);
+	--sidebar: var(--g2);
+}
+
+/* ── Status ───────────────────────────────────────────────────────────────
+ * Four states, four hues, and **these hues are reserved**: nothing that is not
+ * a status may use them.
+ *
+ * That rule is the whole point. Project colours used to be picked anywhere on
+ * the wheel, so one project sat at hue 35 — a hand's breadth from the failure
+ * red — and another at 145, next to the success green. On a screen showing a
+ * failed run, a missing model and two project dots, four warm marks meant four
+ * different things and none of them read. Identity colours now come from the
+ * gaps between these (see `PROJECT_HUES`).
+ *
+ * 9 is a fill, 11 is the only one safe as text — Radix's split, and the reason
+ * `text-destructive` was unreadable before we stopped using it.
+ * ─────────────────────────────────────────────────────────────────────── */
+:root {
+	/* done */
+	--ok-9: oklch(0.648 0.152 155);
+	--ok-11: oklch(0.792 0.162 155);
+	/* running, and anything else in progress */
+	--run-9: oklch(0.66 0.14 235);
+	--run-11: oklch(0.79 0.12 235);
+	/* needs attention, but nothing is broken yet */
+	--warn-9: oklch(0.72 0.15 85);
+	--warn-11: oklch(0.83 0.13 85);
+	/* failed */
+	--fail-9: oklch(0.586 0.203 25);
+	--fail-11: oklch(0.75 0.15 25);
+}
+/* On a light page the fills hold and the text steps are deep: an 11 that is
+   safe as text on a dark page is a pale wash on a light one. */
+:root:not(.dark) {
+	--ok-9: oklch(0.6 0.15 155);
+	--ok-11: oklch(0.44 0.12 155);
+	--run-9: oklch(0.6 0.15 240);
+	--run-11: oklch(0.45 0.14 245);
+	--warn-9: oklch(0.74 0.16 80);
+	--warn-11: oklch(0.47 0.11 70);
+	--fail-9: oklch(0.586 0.203 25);
+	--fail-11: oklch(0.5 0.18 25);
+}
+
+@layer base {
+	* {
+		@apply border-border;
+	}
+	/* Tailwind 4 leaves a button with the arrow. Anything that can be pressed
+	 * shows the hand, everywhere, so no page has to remember to ask for it. */
+	button:not(:disabled),
+	[role='button']:not([aria-disabled='true']),
+	[role='menuitem'],
+	[role='option'],
+	[role='tab'],
+	summary,
+	label:has(input[type='file']) {
+		cursor: pointer;
+	}
+	/* And what can be pressed is not text to be selected: a second click on a
+	 * button, close on the first, would otherwise paint its word in the
+	 * browser's selection colour. What is said in the app is still selectable. */
+	button,
+	[role='button'],
+	[role='menuitem'],
+	[role='option'],
+	[role='tab'],
+	summary {
+		-webkit-user-select: none;
+		user-select: none;
+	}
+	html {
+		/* The app is built around a 16px conversation, so the chrome is sized to
+		 * sit beside it: text-sm = 14px, text-xs = 12px. Tailwind sizes are rem-based, so one lever
+		 * moves type, control heights, icons, padding and the rail together. */
+		font-size: 100%;
+		font-family: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
+	/* Nothing in the app is set in a typewriter face: an address, a name to
+	 * type, a number in a control are all in the
+	 * face of the page. Numbers that change line up by `tabular-nums`, not by
+	 * a fixed-width face. */
+	code,
+	kbd,
+	samp,
+	pre {
+		font-family: inherit;
+	}
+	* {
+		scrollbar-width: thin;
+		scrollbar-color: transparent transparent;
+	}
+	*:hover {
+		scrollbar-color: var(--g7) transparent;
+	}
+	*::-webkit-scrollbar {
+		width: 6px;
+		height: 6px;
+	}
+	*::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	*::-webkit-scrollbar-thumb {
+		background: transparent;
+		border-radius: 3px;
+	}
+	*:hover::-webkit-scrollbar-thumb {
+		background: var(--g7);
+	}
+}
+
+/* Toast text is text.
+ * sonner leaves its own content unselectable so that a drag reads as a
+ * swipe-to-dismiss. That is right for "Saved" and wrong for anything carrying a
+ * detail somebody needs. */
+[data-sonner-toast] [data-title],
+[data-sonner-toast] [data-description] {
+	-webkit-user-select: text;
+	user-select: text;
+	cursor: text;
+}
+
+/* A toast that says how something went (done, failed, a warning, a note) is
+ * colored by sonner, which is told the theme is dark and is not ours to tell
+ * otherwise. On a light page that was a near-black slab with pale words. Here
+ * it is a tint of the state's own color with its text step on it, as a dark
+ * page has. */
+:root:not(.dark) [data-sonner-toaster][data-sonner-theme] {
+	--success-bg: color-mix(in oklab, var(--ok-9) 9%, white);
+	--success-border: color-mix(in oklab, var(--ok-9) 32%, white);
+	--success-text: var(--ok-11);
+	--info-bg: color-mix(in oklab, var(--run-9) 9%, white);
+	--info-border: color-mix(in oklab, var(--run-9) 32%, white);
+	--info-text: var(--run-11);
+	--warning-bg: color-mix(in oklab, var(--warn-9) 13%, white);
+	--warning-border: color-mix(in oklab, var(--warn-9) 45%, white);
+	--warning-text: var(--warn-11);
+	--error-bg: color-mix(in oklab, var(--fail-9) 8%, white);
+	--error-border: color-mix(in oklab, var(--fail-9) 30%, white);
+	--error-text: var(--fail-11);
+}
+
+@utility no-scrollbar {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+@custom-variant data-open {
+	&:where([data-state='open']), &:where([data-open]:not([data-open='false'])) { @slot; }
+}
+@custom-variant data-closed {
+	&:where([data-state='closed']), &:where([data-closed]:not([data-closed='false'])) { @slot; }
+}
+@custom-variant data-checked {
+	&:where([data-state='checked']), &:where([data-checked]:not([data-checked='false'])) { @slot; }
+}
+@custom-variant data-unchecked {
+	&:where([data-state='unchecked']), &:where([data-unchecked]:not([data-unchecked='false'])) { @slot; }
+}
+@custom-variant data-selected {
+	&:where([data-selected]) { @slot; }
+}
+@custom-variant data-disabled {
+	&:where([data-disabled='true']), &:where([data-disabled]:not([data-disabled='false'])) { @slot; }
+}
+@custom-variant data-active {
+	&:where([data-state='active']), &:where([data-active]:not([data-active='false'])) { @slot; }
+}
+
+/* "No" to a button press, where the press happened: a short sideways shake on
+ * whatever the problem is. Keyed by the caller (a `{#key}` on the time of the
+ * refusal) so pressing Run again on the same problem shakes it again. Stilled
+ * for anyone who has asked for less motion; the colour still says it. */
+@keyframes shake {
+	0%, 100% { transform: translateX(0); }
+	20%, 60% { transform: translateX(-6px); }
+	40%, 80% { transform: translateX(6px); }
+}
+.shake {
+	animation: shake 400ms ease-in-out;
+}
+@media (prefers-reduced-motion: reduce) {
+	.shake { animation: none; }
+}
+
+/*
+ * Every list page reads the same way (queue, workflows, models, cache, the
+ * library's table): one line a row, fixed columns, a small quiet header,
+ * a hairline between rows. Said once, here, so a page cannot drift into its
+ * own padding and its own header — which is how five pages got five looks.
+ * The first cell of a row carries the page's left edge.
+ */
+@utility list-table {
+	@apply w-full table-fixed border-separate border-spacing-0 text-xs;
+}
+@utility list-th {
+	@apply border-b border-border py-1.5 pr-4 text-left text-[11.5px] font-medium text-muted-foreground first:pl-4;
+}
+@utility list-td {
+	@apply border-b border-border/40 py-1.5 pr-4 first:pl-4;
+}
+@utility list-row {
+	@apply cursor-pointer transition-colors hover:bg-accent/40;
+}
+
+/* ── Deleting ─────────────────────────────────────────────────────────────
+ * One look for everything that destroys something, wherever it is: red words
+ * on the ordinary ground at rest, and when reached for a bright red ground
+ * with white words on it. Never red on red.
+ *
+ *   a menu item         `variant="destructive"`
+ *   a button with words `.danger`        red at rest
+ *   a button of an icon `.danger-hover`  as quiet as its neighbours at rest,
+ *                                        so a row of tools is not one red one
+ */
+[data-slot='dropdown-menu-item'][data-variant='destructive'],
+[data-slot='dropdown-menu-item'][data-variant='destructive'] svg,
+.danger {
+	color: var(--fail-11) !important;
+}
+[data-slot='dropdown-menu-item'][data-variant='destructive'][data-highlighted],
+[data-slot='dropdown-menu-item'][data-variant='destructive']:focus,
+.danger:hover,
+.danger:focus-visible,
+.danger-hover:hover,
+.danger-hover:focus-visible {
+	background: var(--fail-9) !important;
+	color: white !important;
+}
+[data-slot='dropdown-menu-item'][data-variant='destructive'][data-highlighted] svg,
+[data-slot='dropdown-menu-item'][data-variant='destructive']:focus svg,
+.danger:hover svg,
+.danger-hover:hover svg {
+	color: white !important;
+	opacity: 1;
+}
+/* The last word on it, in the box that asks whether you mean it: red already, since it is the answer. */
+.danger-solid {
+	background: var(--fail-9) !important;
+	color: white !important;
+}
+.danger-solid:hover {
+	background: oklch(from var(--fail-9) calc(l + 0.05) c h) !important;
+}
+
+/* ── Modals ───────────────────────────────────────────────────────────────
+ * A dialog is the one thing on screen that is above everything else, and it
+ * has to look it: a surface a clear step lighter than the page, a lit top
+ * edge, and a deep shadow under it. A hairline ring on a panel the same
+ * colour as the page behind it reads as a rectangle drawn on the page.
+ */
+.dialog-surface {
+	background: oklch(from var(--background) calc(l + 0.055) c h);
+	box-shadow:
+		inset 0 1px 0 0 color-mix(in oklch, var(--foreground) 11%, transparent),
+		0 0 0 1px color-mix(in oklch, var(--foreground) 9%, transparent),
+		0 2px 6px 0 rgb(0 0 0 / 0.3),
+		0 28px 80px -12px rgb(0 0 0 / 0.75);
+}
+/* On a light page the same shadow is a black smear round a white sheet. The
+   sheet is already the lightest thing there; it wants a hairline and a soft,
+   wide shadow, and no lit edge. */
+:root:not(.dark) .dialog-surface {
+	/* A step lighter than a light page is past white, and a look's cream page
+	   pushed there keeps its color and turns lemon. The lifted surface the
+	   theme already names is the one. */
+	background: var(--popover);
+	box-shadow:
+		0 0 0 1px color-mix(in oklab, var(--foreground) 10%, transparent),
+		0 2px 6px 0 rgb(0 0 0 / 0.06),
+		0 28px 80px -12px rgb(0 0 0 / 0.3);
+}
+
+/* Words for something under way: a band of light passes along them, over and
+ * over, so the line reads as working and not as stuck. */
+.shimmer {
+	/* The light is a background showing through the letters, and a background
+	   stops at the line box: with a tight line the tails of y and p fall
+	   outside it and are not drawn. The box is given room for them. */
+	display: inline-block;
+	line-height: 1.5;
+	/* As much above as below, so it still sits level with what is beside it. */
+	padding-block: 0.1em;
+	color: transparent;
+	background: linear-gradient(
+			100deg,
+			var(--muted-foreground) 0%,
+			var(--muted-foreground) 38%,
+			var(--foreground) 50%,
+			var(--muted-foreground) 62%,
+			var(--muted-foreground) 100%
+		)
+		0 0 / 250% 100%;
+	-webkit-background-clip: text;
+	background-clip: text;
+	animation: shimmer 1.8s linear infinite;
+}
+@keyframes shimmer {
+	from {
+		background-position: 100% 0;
+	}
+	to {
+		background-position: -66% 0;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.shimmer {
+		animation: none;
+		color: var(--muted-foreground);
+		background: none;
+	}
+}
