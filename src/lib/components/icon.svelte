@@ -1,21 +1,16 @@
 <script lang="ts">
-	import { ICONS, type IconName } from '$lib/icons';
+	import type { IconName } from '$lib/icons';
 
 	/**
 	 * `<Icon name="panel-left" />`. The name is typed against the map, so a
 	 * misspelling is a build error rather than a hole in the interface.
 	 *
-	 * `fill` is for the handful of glyphs that mean something *filled* — a kept
-	 * star, a play triangle. Lucide is an outline set, and a filled star is the
-	 * one place where outline-vs-filled carries meaning rather than style.
+	 * It is two elements and nothing more: the drawing itself is in the page
+	 * once (`SPRITE`, in the layout), and this points at it. The drawing says
+	 * how it is drawn (a line of one weight, in the color of the text round
+	 * it); this says only how big.
 	 */
-	let {
-		name,
-		class: className = 'size-4',
-		fill = false
-	}: { name: IconName; class?: string; fill?: boolean } = $props();
-
-	const Cmp = $derived(ICONS[name]);
+	let { name, class: className = 'size-4' }: { name: IconName; class?: string; fill?: boolean } = $props();
 </script>
 
-<Cmp class={className} fill={fill ? 'currentColor' : 'none'} />
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" class="shrink-0 {className}"><use href="#icon-{name}" /></svg>

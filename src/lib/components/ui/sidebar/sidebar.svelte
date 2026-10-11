@@ -10,6 +10,7 @@
 		side = "left",
 		variant = "sidebar",
 		collapsible = "offcanvas",
+		dragging = false,
 		class: className,
 		children,
 		...restProps
@@ -17,6 +18,7 @@
 		side?: "left" | "right";
 		variant?: "sidebar" | "floating" | "inset";
 		collapsible?: "offcanvas" | "icon" | "none";
+		dragging?: boolean;
 	} = $props();
 
 	const sidebar = useSidebar();
@@ -65,6 +67,7 @@
 		class="text-sidebar-foreground group peer hidden md:block"
 		data-state={sidebar.state}
 		data-collapsible={sidebar.state === "collapsed" ? collapsible : ""}
+		data-dragging={dragging ? "true" : undefined}
 		data-variant={variant}
 		data-side={side}
 		data-slot="sidebar"
@@ -73,7 +76,7 @@
 		<div
 			data-slot="sidebar-gap"
 			class={cn(
-				"transition-[width] duration-200 ease-linear relative w-(--sidebar-width) bg-transparent",
+				"transition-[width] duration-200 ease-linear group-data-[dragging=true]:transition-none relative w-(--sidebar-width) bg-transparent",
 				"group-data-[collapsible=offcanvas]:w-0",
 				"group-data-[side=right]:rotate-180",
 				variant === "floating" || variant === "inset"
@@ -84,7 +87,7 @@
 		<div
 			data-slot="sidebar-container"
 			class={cn(
-				"fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex",
+				"fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear group-data-[dragging=true]:transition-none md:flex",
 				side === "left"
 					? "start-0 group-data-[collapsible=offcanvas]:start-[calc(var(--sidebar-width)*-1)]"
 					: "end-0 group-data-[collapsible=offcanvas]:end-[calc(var(--sidebar-width)*-1)]",
@@ -99,7 +102,7 @@
 			<div
 				data-sidebar="sidebar"
 				data-slot="sidebar-inner"
-				class="bg-sidebar group-data-[variant=floating]:ring-sidebar-border group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 flex size-full flex-col"
+				class="bg-sidebar group-data-[variant=floating]:ring-sidebar-border group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 relative flex size-full flex-col"
 			>
 				{@render children?.()}
 			</div>

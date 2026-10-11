@@ -25,7 +25,7 @@
 	 * (`ui.unsaved`). Going to another section is free: you may not be done,
 	 * and what is unsaved is carried along. Closing then (the ×, Escape, a
 	 * click outside) does not happen: the bar that says "Not saved yet" is
-	 * what stops it, and it shakes to say so. Save or Discard there, and then
+	 * what stops it, and says so. Save or Discard there, and then
 	 * close.
 	 */
 	function leave(to: SettingsSection | null) {
@@ -65,6 +65,7 @@
 				<button
 					onclick={() => leave(null)}
 					aria-label="Close"
+					data-tip="Close (Esc)"
 					class="absolute right-3 top-4 grid size-8 place-items-center rounded-full text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
 				>
 					<Icon name="x" class="size-4" />

@@ -94,9 +94,9 @@
 			onpointerdown={drag}
 			ondblclick={() => (ui.dockHeight = 288)}
 			onkeydown={step}
-			class="group/edge absolute inset-x-0 -top-1 z-10 h-2 cursor-row-resize outline-none"
+			class="group/edge absolute inset-x-0 -top-1.5 z-30 h-3 cursor-row-resize outline-none"
 		>
-			<div class="mt-[3px] h-px w-full transition-colors group-hover/edge:bg-foreground/35 group-focus-visible/edge:bg-foreground/35 {dragging ? 'bg-foreground/50' : ''}"></div>
+			<div class="mt-[5px] h-0.5 w-full transition-colors group-hover/edge:bg-foreground/40 group-focus-visible/edge:bg-foreground/40 {dragging ? 'bg-foreground/60' : ''}"></div>
 		</div>
 	{/if}
 

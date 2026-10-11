@@ -80,9 +80,9 @@
 				onpointerdown={drag}
 				ondblclick={() => (ui.inspectorWidth = DEFAULT)}
 				onkeydown={nudge}
-				class="group/edge absolute inset-y-0 -left-1 z-10 w-2 cursor-col-resize outline-none"
+				class="group/edge absolute inset-y-0 -left-1.5 z-30 w-3 cursor-col-resize outline-none"
 			>
-				<div class="mx-auto h-full w-px transition-colors group-hover/edge:bg-foreground/35 group-focus-visible/edge:bg-foreground/35 {dragging ? 'bg-foreground/50' : ''}"></div>
+				<div class="mx-auto h-full w-0.5 transition-colors group-hover/edge:bg-foreground/40 group-focus-visible/edge:bg-foreground/40 {dragging ? 'bg-foreground/60' : ''}"></div>
 			</div>
 		{/if}
 		{@render body()}

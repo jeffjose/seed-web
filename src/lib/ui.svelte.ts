@@ -1,6 +1,7 @@
 import { untrack } from 'svelte';
 import { pushState, replaceState } from '$app/navigation';
 import type { IconName } from '$lib/icons';
+import { KEPT, fontOf, hrefOf, wear } from '$lib/fonts';
 
 /** View state kept on this machine. Storage can be unavailable; nothing here depends on it. */
 function recall(key: string): string | null {
@@ -55,6 +56,16 @@ class UiState {
 		this.#inspector = open;
 		if (!open) this.inspectorWide = false;
 		remember('inspector:state', String(open));
+	}
+
+	/** How wide the sidebar is, in pixels: dragged by its edge, and kept as it was left. */
+	#sidebarWidth = $state(Number(recall('sidebar:width')) || 272);
+	get sidebarWidth() {
+		return this.#sidebarWidth;
+	}
+	set sidebarWidth(px: number) {
+		this.#sidebarWidth = Math.round(px);
+		remember('sidebar:width', String(this.#sidebarWidth));
 	}
 
 	/** How wide the right pane is, in pixels: dragged by its edge, and kept as it was left. */
@@ -171,7 +182,7 @@ class UiState {
 		if (!how && !_) return;
 		this.unsaved = how ? { ...rest, [section]: how } : rest;
 	}
-	/** Counts up each time leaving was stopped by something unsaved: the bar that says so shakes. */
+	/** Counts up each time leaving was stopped by something unsaved: the bar says so. */
 	stopped = $state(0);
 
 	/** The search over everything (⌘K) is open. */
@@ -205,41 +216,73 @@ class UiState {
 	}
 }
 
-export type Theme = 'system' | 'dark' | 'light';
-export const THEMES: { value: Theme; label: string; icon: 'monitor' | 'moon' | 'sun' }[] = [
-	{ value: 'system', label: 'System', icon: 'monitor' },
-	{ value: 'dark', label: 'Dark', icon: 'moon' },
-	{ value: 'light', label: 'Light', icon: 'sun' }
-];
+/**
+ * The looks there are. The first three are the app's own: dark, light, and
+ * whichever of the two the system is in. The rest are named looks, each no
+ * more than a page color and a text color (`app.css`, "Named looks", where
+ * the same two colors are said to the stylesheet; `swatch` here is only for
+ * showing the choice). `dark` is which of the two kinds of page it is.
+ */
+export const THEMES = [
+	{ value: 'system', label: 'System', icon: 'monitor', dark: true, swatch: null },
+	{ value: 'dark', label: 'Dark', icon: 'moon', dark: true, swatch: ['#111113', '#eeeef0'] },
+	{ value: 'light', label: 'Light', icon: 'sun', dark: false, swatch: ['#fafbfa', '#1c1f1c'] },
+	{ value: 'paper', label: 'Paper', icon: 'sun', dark: false, swatch: ['#f5efe3', '#2a251d'] },
+	{ value: 'novel', label: 'Novel', icon: 'moon', dark: true, swatch: ['#191713', '#e6dfd0'] },
+	{ value: 'terminal', label: 'Terminal', icon: 'moon', dark: true, swatch: ['#060a06', '#b6efb6'] },
+	{ value: 'nord', label: 'Nord', icon: 'moon', dark: true, swatch: ['#2e3440', '#eceff4'] },
+	{ value: 'solarized-light', label: 'Solarized Light', icon: 'sun', dark: false, swatch: ['#fdf6e3', '#475b62'] }
+] as const satisfies readonly { value: string; label: string; icon: 'monitor' | 'moon' | 'sun'; dark: boolean; swatch: readonly [string, string] | null }[];
+export type Theme = (typeof THEMES)[number]['value'];
+/** The app's own, which the stylesheet has without being told which. */
+const OWN: Theme[] = ['system', 'dark', 'light'];
 
 /**
- * How the app looks on this machine: light or dark. Kept in this browser (it
- * is about the screen in front of you) and put back as soon as the app loads.
- * `app.html` reads the theme before the first paint, so there is no flash;
- * this is the same choice, held where the app can change it.
+ * How the app looks on this machine: light or dark, in which look, and in
+ * what face. Kept in this browser (it is about the screen in front of you)
+ * and put back as soon as the app loads. `app.html` reads all of it before
+ * the first paint, so there is no flash; this is the same choice, held where
+ * the app can change it.
  */
 class Appearance {
-	theme = $state<Theme>('dark');
+	/** As the system has it, light or dark, until another is chosen. */
+	theme = $state<Theme>('system');
 
 	constructor() {
-		try {
-			const t = localStorage.getItem('theme');
-			if (t === 'system' || t === 'light' || t === 'dark') this.theme = t;
-		} catch {}
+		const known = THEMES.find((x) => x.value === recall('theme'));
+		if (known) this.theme = known.value;
 		if (typeof window === 'undefined') return;
 		// Following the system means following it when it changes, too.
 		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => this.apply());
 	}
 
+	/**
+	 * The face the app is set in (`fonts.ts`). Kept as soon as it is chosen: the whole app wears it at once. Its
+	 * family and where it is fetched from are kept beside its name, for the page to be dressed in it before the app
+	 * has come (`app.html`).
+	 */
+	font = $state<string>(fontOf(recall('font')).key);
+	setFont(key: string) {
+		const f = fontOf(key);
+		this.font = f.key;
+		remember('font', f.key);
+		remember('font:family', f.key === KEPT ? '' : f.family);
+		remember('font:href', hrefOf(f));
+		wear(f);
+	}
+
 	/** What is being tried on in Settings before it is saved; null when nothing is. */
 	private trying: { theme: Theme } | null = null;
 
-	/** Put it on the page: light or dark. */
+	/** Put it on the page: light or dark, and which look. */
 	apply() {
 		if (typeof window === 'undefined') return;
 		const theme = this.trying?.theme ?? this.theme;
-		const dark = theme === 'system' ? window.matchMedia('(prefers-color-scheme: dark)').matches : theme === 'dark';
+		const dark = theme === 'system' ? window.matchMedia('(prefers-color-scheme: dark)').matches : THEMES.find((t) => t.value === theme)!.dark;
 		document.documentElement.classList.toggle('dark', dark);
+		// A named look says which it is, for the stylesheet to dress the page by; the app's own say nothing.
+		if (OWN.includes(theme)) delete document.documentElement.dataset.theme;
+		else document.documentElement.dataset.theme = theme;
 	}
 
 	/**
@@ -253,9 +296,9 @@ class Appearance {
 
 	setTheme(theme: Theme) {
 		this.theme = theme;
-		try {
-			localStorage.setItem('theme', theme);
-		} catch {}
+		remember('theme', theme);
+		// And whether it is a dark one, for `app.html`, which dresses the page before any of this is loaded.
+		remember('theme:dark', THEMES.find((t) => t.value === theme)!.dark ? '1' : '0');
 		this.apply();
 	}
 }

@@ -6,7 +6,7 @@
 		variants: {
 			variant: {
 				default: "hover:bg-sidebar-accent hover:text-sidebar-foreground",
-				outline: "bg-background hover:bg-sidebar-accent hover:text-sidebar-foreground shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
+				outline: "bg-background hover:bg-sidebar-accent hover:text-sidebar-foreground shadow-[0_0_0_1px_var(--sidebar-border)] hover:shadow-[0_0_0_1px_var(--sidebar-accent)]",
 			},
 			size: {
 				default: "h-9 px-2 gap-2.5",

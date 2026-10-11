@@ -3,7 +3,10 @@
 	import * as Sidebar from '$lib/components/ui/sidebar';
 	import SidebarShell from '$lib/components/sidebar-shell.svelte';
 	import { Icon } from '$lib/icon';
+	import { mergeProps } from 'bits-ui';
+	import RightClick from '$lib/components/right-click.svelte';
 	import { ACTION, PLACES, isAt } from '$lib/nav';
+	import { placeMenu } from '$lib/menus';
 	import { ui } from '$lib/ui.svelte';
 </script>
 
@@ -36,14 +39,19 @@
 			<Sidebar.Menu>
 				{#each [ACTION, ...PLACES] as item (item.href)}
 					<Sidebar.MenuItem>
-						<Sidebar.MenuButton isActive={isAt(item, page.url.pathname)}>
-							{#snippet child({ props })}
-								<a href={item.href} {...props} onclick={dismiss}>
-									<Icon name={item.icon} class="shrink-0" />
-									<span class="flex-1 font-medium">{item.label}</span>
-								</a>
+						<!-- What can be done to a place is under the right button on it (`menus.ts`). -->
+						<RightClick items={() => placeMenu(item)}>
+							{#snippet children(menu)}
+								<Sidebar.MenuButton isActive={isAt(item, page.url.pathname)}>
+									{#snippet child({ props })}
+										<a href={item.href} {...mergeProps(props, menu)} onclick={dismiss}>
+											<Icon name={item.icon} class="shrink-0" />
+											<span class="flex-1 font-medium">{item.label}</span>
+										</a>
+									{/snippet}
+								</Sidebar.MenuButton>
 							{/snippet}
-						</Sidebar.MenuButton>
+						</RightClick>
 					</Sidebar.MenuItem>
 				{/each}
 			</Sidebar.Menu>

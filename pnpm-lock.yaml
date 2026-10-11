@@ -166,13 +166,19 @@ importers:
 
   .:
     dependencies:
+      '@fontsource-variable/fira-code':
+        specifier: ^5.3.0
+        version: 5.3.0
       '@fontsource-variable/geist':
         specifier: ^5.3.0
         version: 5.3.0
+      '@radix-ui/colors':
+        specifier: ^3.0.0
+        version: 3.0.0
     devDependencies:
       '@lucide/svelte':
-        specifier: ^1.7.0
-        version: 1.50.0(svelte@5.57.1)
+        specifier: ^1.54.0
+        version: 1.54.0(svelte@5.57.1)
       '@sveltejs/adapter-node':
         specifier: ^5.5.4
         version: 5.5.7(@sveltejs/kit@2.70.3(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.57.1)(vite@7.3.6(@types/node@26.6.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)))(svelte@5.57.1)(typescript@5.9.3)(vite@7.3.6(@types/node@26.6.4)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.15)))
@@ -386,6 +392,9 @@ packages:
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
 
+  '@fontsource-variable/fira-code@5.3.0':
+    resolution: {integrity: sha512-ZhvHeknlicraKVSJBa1NrJnXDVByUkC407zwgELYfmnx3p9g8vwIPfQCxx8YD3K7dAeCdLuHJOHlpMfRsIcApQ==}
+
   '@fontsource-variable/geist@5.3.0':
     resolution: {integrity: sha512-j0m+vLQuG5XAYoHtGCVu0spvlGreR3EzpECUVzkFmI1mTVnAO38l/NEPDCFgZ177JxzYJCLSmTQibIiYPilGrA==}
 
@@ -408,8 +417,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@lucide/svelte@1.50.0':
-    resolution: {integrity: sha512-0VGYwm1YgZd7UMv/DLZIUV0QXj9QbVds3b/ElkoTj9TwpI5GIHAV1Yk74TQ3dAzY0ShT4X/2xq7pihzBNVnvxQ==}
+  '@lucide/svelte@1.54.0':
+    resolution: {integrity: sha512-PbUrcmVPU71zmcs1Kc5RlgF83SsBsSNC+MeuttAHMmvPMuoIJfyDPjit5kpAJxJwsmN2Pk1Bx75AwZxP8vkDvw==}
     peerDependencies:
       svelte: ^5
 
@@ -422,6 +431,9 @@ packages:
 
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
+
+  '@radix-ui/colors@3.0.0':
+    resolution: {integrity: sha512-FUOsGBkHrYJwCSEtWRCIfQbZG7q1e6DgxCIOe1SUQzDe/7rXXeA47s8yCn6fuTNQAj1Zq4oTFi9Yjp3wzElcxg==}
 
   '@rollup/plugin-commonjs@29.0.3':
     resolution: {integrity: sha512-ZaOxZceP7SOUW7Lqw5IRVweSQYWaeIPnXIGLiB690EBA3FGJTO40EEr2L5yZplJWsgTCogILRSpcAe7+U0Otdg==}
@@ -1267,6 +1279,8 @@ snapshots:
 
   '@floating-ui/utils@0.2.12': {}
 
+  '@fontsource-variable/fira-code@5.3.0': {}
+
   '@fontsource-variable/geist@5.3.0': {}
 
   '@internationalized/date@3.12.4':
@@ -1292,7 +1306,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.6.0
 
-  '@lucide/svelte@1.50.0(svelte@5.57.1)':
+  '@lucide/svelte@1.54.0(svelte@5.57.1)':
     dependencies:
       svelte: 5.57.1
 
@@ -1300,6 +1314,8 @@ snapshots:
     optional: true
 
   '@polka/url@1.0.0-next.29': {}
+
+  '@radix-ui/colors@3.0.0': {}
 
   '@rollup/plugin-commonjs@29.0.3(rollup@4.64.0)':
     dependencies:

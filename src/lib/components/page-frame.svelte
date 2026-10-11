@@ -21,7 +21,7 @@
 		title: string;
 		/** Beside the title: a count, or where this is. */
 		aside?: string | number;
-		/** Before the title: a colour, an icon. */
+		/** Before the title: a color, an icon. */
 		lead?: Snippet;
 		/** Straight after the title: an (i). */
 		after?: Snippet;
@@ -35,7 +35,7 @@
 	} = $props();
 </script>
 
-<div class="relative min-h-0 flex-1 overflow-y-auto">
+<div class="relative min-h-0 flex-1 overflow-y-auto [scrollbar-gutter:stable]">
 	<div class="mx-auto px-8 pb-12 pt-14 {width}">
 		<!-- The name, and across from it what can be done on the page. -->
 		<div class="flex min-h-10 flex-wrap items-center gap-x-3 gap-y-2">

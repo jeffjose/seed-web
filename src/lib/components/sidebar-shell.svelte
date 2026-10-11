@@ -10,7 +10,7 @@
 	 * screen is one icon in the top-left corner, and putting the pointer on it
 	 * floats the *whole* nav back over the page until the pointer leaves.
 	 *
-	 * The middle state is what we dropped: a 3.5rem rail of unlabelled icons that
+	 * The middle state is what we dropped: a 3.5rem rail of unlabeled icons that
 	 * needed a tooltip each to be usable — a menu that costs a column to say less
 	 * than a menu, and which had to grow hover flyouts of its own for Accounts and
 	 * Manage before their lists were reachable at all. Folding to nothing and
@@ -142,17 +142,73 @@
 			stay();
 		};
 	});
+
+	/** No narrower than its controls can stand, and never so wide the page has no room. */
+	const MIN = 180;
+	const DEFAULT = 272;
+	const fit = (px: number) =>
+		typeof window === 'undefined'
+			? px
+			: Math.max(MIN, Math.min(px, Math.min(520, Math.max(MIN, window.innerWidth - 480))));
+
+	let dragging = $state(false);
+
+	function drag(e: PointerEvent) {
+		if (e.button !== 0) return;
+		e.preventDefault();
+		const startX = e.clientX;
+		const startW = ui.sidebarWidth;
+		dragging = true;
+		const move = (m: PointerEvent) => {
+			ui.sidebarWidth = fit(startW + (m.clientX - startX));
+		};
+		const done = () => {
+			window.removeEventListener('pointermove', move);
+			dragging = false;
+		};
+		window.addEventListener('pointermove', move);
+		window.addEventListener('pointerup', done, { once: true });
+	}
+
+	function nudge(e: KeyboardEvent) {
+		if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+		e.preventDefault();
+		ui.sidebarWidth = fit(ui.sidebarWidth + (e.key === 'ArrowRight' ? 16 : -16));
+	}
 </script>
 
 <!-- `offcanvas`, so folding takes the whole panel off the left edge and the gap it
-     was holding open collapses to zero. No <Sidebar.Rail /> — the rail was the
-     drag-edge of a strip that no longer exists. -->
+     was holding open collapses to zero. -->
 <Sidebar.Root
 	collapsible="offcanvas"
+	{dragging}
 	{...restProps}
 >
 	{@render body({ inPeek: false, dismiss, reportMenu: () => {} })}
+	{#if sidebar.open}
+		<!-- The right edge it is dragged by: a line that shows when it is under the
+		     pointer. Twice clicked, it goes back to the width it came with. -->
+		<!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions (a separator that can be moved is a control) -->
+		<div
+			role="separator"
+			aria-orientation="vertical"
+			aria-label="Width of the sidebar"
+			aria-valuenow={ui.sidebarWidth}
+			tabindex="0"
+			onpointerdown={drag}
+			ondblclick={() => (ui.sidebarWidth = DEFAULT)}
+			onkeydown={nudge}
+			class="group/edge absolute inset-y-0 -right-1.5 z-30 w-3 cursor-col-resize outline-none"
+		>
+			<div class="mx-auto h-full w-0.5 transition-colors group-hover/edge:bg-foreground/40 group-focus-visible/edge:bg-foreground/40 {dragging ? 'bg-foreground/60' : ''}"></div>
+		</div>
+	{/if}
 </Sidebar.Root>
+
+{#if dragging}
+	<!-- While dragging, the pointer is a resize arrow wherever it goes, and nothing under it is selected. -->
+	<div class="fixed inset-0 z-50 cursor-col-resize select-none"></div>
+{/if}
 
 <!-- Folded, the rail floats back on hover — but the thing you hover is the tab
      bar's own toggle, not a chip of the rail's. One control per side: hover to

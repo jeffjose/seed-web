@@ -60,7 +60,7 @@
 				<Icon name="panel-right" class="size-[15px]" />
 			</button>
 		</header>
-		<div class="flex min-h-0 flex-1 flex-col overflow-y-auto">
+		<div class="flex min-h-0 flex-1 flex-col overflow-y-auto [scrollbar-gutter:stable]">
 			{#if children}
 				{@render children()}
 			{:else}

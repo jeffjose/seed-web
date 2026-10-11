@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { Icon } from '$lib/icon';
+	import MoreInfo from '$lib/components/more-info.svelte';
 	import type { IconName } from '$lib/icons';
 
 	/**
@@ -16,6 +17,7 @@
 		title,
 		icon,
 		description,
+		info,
 		children,
 		below,
 		details
@@ -24,6 +26,8 @@
 		/** A picture of what the row is about, before its name: for rows that are things (a server) and not settings. */
 		icon?: IconName;
 		description?: string;
+		/** More about it, for whoever wants it: behind an (i) beside its name, so that the row itself says only a few words. */
+		info?: string;
 		/** In place of `description`, when it is more than a sentence of text. */
 		details?: Snippet;
 		/** The control, at the right. */
@@ -39,7 +43,7 @@
 				<span class="mt-0.5 grid size-8 shrink-0 place-items-center rounded-lg bg-foreground/[0.06] text-muted-foreground"><Icon name={icon} class="size-4" /></span>
 			{/if}
 			<div class="min-w-0 flex-1">
-				<div class="text-[14px]">{title}</div>
+				<div class="text-[14px]">{title}{#if info}<span class="ml-1.5"><MoreInfo label="More about {title}">{info}</MoreInfo></span>{/if}</div>
 				{#if details}
 					<div class="mt-0.5 text-[13px] leading-snug text-muted-foreground">{@render details()}</div>
 				{:else if description}
