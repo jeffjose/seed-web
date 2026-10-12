@@ -54,10 +54,10 @@ const PARTS = { surface: 3, ink: 11 } as const;
 const said = (scale: (hue: Hue) => Scale) =>
 	HUES.flatMap((hue) => Object.entries(PARTS).map(([part, n]) => `--hue-${hue}-${part}:${scale(hue)[`${hue}${n}`]}`)).join(';');
 
-/** On a named look the tinted surface is mixed from the hue and that look's own page: Radix's is drawn for a neutral page, and on a tinted or a lifted one it reads as a hole, or not at all. */
+/** On a look that is not the app's own the tinted surface is mixed from the hue and that look's own page: Radix's is drawn for a neutral page, and on a tinted or a lifted one it reads as a hole, or not at all. */
 const mixed = (part: number) => HUES.map((hue) => `--hue-${hue}-surface:color-mix(in oklab,var(--hue-${hue}-ink) ${part}%,var(--background))`).join(';');
 /** Every hue's steps by name, for each kind of page. Put in the document's head once (`+layout.svelte`). */
-export const PALETTE_CSS = `:root{${said(light)}}:root.dark{${said(dark)}}:root[data-theme]{${mixed(10)}}:root.dark[data-theme]{${mixed(16)}}`;
+export const PALETTE_CSS = `:root{${said(light)}}:root.dark{${said(dark)}}:root[data-look]{${mixed(10)}}:root.dark[data-look]{${mixed(16)}}`;
 
 /**
  * Whose color: always the same one for the same name, on any machine and

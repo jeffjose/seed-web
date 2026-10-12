@@ -24,14 +24,14 @@ pnpm build
 | Settings: a modal over any page, addressed as `#settings/<section>` | `settings-dialog.svelte`, `ui.svelte.ts` | |
 | Confirm dialog, tooltips (`data-tip`), toasts, empty state | `confirm-dialog.svelte`, `tooltips.svelte`, `empty.svelte` | |
 | Menus: one list, under the right button or dropped from a button | `menus.ts`, `right-click.svelte`, `menu-list.svelte` | |
-| Themes and faces: light, dark, named looks of two colors each, a font chosen in Settings | `app.css`, `ui.svelte.ts`, `fonts.ts`, `appearance-panel.svelte` | |
+| Themes and faces: a switch for light, dark or as the system is; under it the looks, each two colors for a light page and two for a dark one; a font chosen in Settings | `app.css`, `ui.svelte.ts`, `fonts.ts`, `appearance-panel.svelte` | |
 | Motion: how things arrive over the page, open in it, and are scrolled to | `app.css`, `motion.ts`, `glide.ts` | |
 | Identity colors: a name hashed to one of 21 hues | `palette.ts` | |
 
-Shell state (panel sizes, what is open, theme) lives in `src/lib/ui.svelte.ts`
+Shell state (panel sizes, what is open, light or dark, the look) lives in `src/lib/ui.svelte.ts`
 and is remembered in `localStorage`. Color tokens, the gray ramp and the base
 type are in `src/app.css`; the type scale is in `src/lib/styles.ts`. The font is
-Geist, and the theme is light or dark as the system is, until another is chosen.
+Geist, and the page is light or dark as the system is, until told otherwise.
 
 Why it looks and moves as it does is in [DESIGN.md](DESIGN.md): every choice
 with its values and its reason, and what was tried and thrown away.

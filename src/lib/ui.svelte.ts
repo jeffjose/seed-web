@@ -22,7 +22,7 @@ function remember(key: string, value: string) {
  * the one Settings opens on, and the one whose address is plain `#settings`.
  */
 export const SETTINGS_SECTIONS = [
-	{ key: 'appearance', label: 'Appearance', icon: 'palette', group: 'App', words: 'theme dark light' },
+	{ key: 'appearance', label: 'Appearance', icon: 'palette', group: 'App', words: 'theme look mode dark light' },
 	{ key: 'shortcuts', label: 'Shortcuts', icon: 'keyboard', group: 'App', words: 'keyboard keys' },
 	{ key: 'general', label: 'General', icon: 'sliders-horizontal', group: 'Example', words: 'options' },
 	{ key: 'notifications', label: 'Notifications', icon: 'bell', group: 'Example', words: 'alerts sounds' }
@@ -217,40 +217,65 @@ class UiState {
 }
 
 /**
- * The looks there are. The first three are the app's own: dark, light, and
- * whichever of the two the system is in. The rest are named looks, each no
- * more than a page color and a text color (`app.css`, "Named looks", where
- * the same two colors are said to the stylesheet; `swatch` here is only for
- * showing the choice). `dark` is which of the two kinds of page it is.
+ * Light or dark is one choice and the look is another. They were one list
+ * once, with light looks and dark looks in it: choosing a look chose light or
+ * dark with it, and System meant nothing once a look was on.
  */
-export const THEMES = [
-	{ value: 'system', label: 'System', icon: 'monitor', dark: true, swatch: null },
-	{ value: 'dark', label: 'Dark', icon: 'moon', dark: true, swatch: ['#111113', '#eeeef0'] },
-	{ value: 'light', label: 'Light', icon: 'sun', dark: false, swatch: ['#fafbfa', '#1c1f1c'] },
-	{ value: 'paper', label: 'Paper', icon: 'sun', dark: false, swatch: ['#f5efe3', '#2a251d'] },
-	{ value: 'novel', label: 'Novel', icon: 'moon', dark: true, swatch: ['#191713', '#e6dfd0'] },
-	{ value: 'terminal', label: 'Terminal', icon: 'moon', dark: true, swatch: ['#060a06', '#b6efb6'] },
-	{ value: 'nord', label: 'Nord', icon: 'moon', dark: true, swatch: ['#2e3440', '#eceff4'] },
-	{ value: 'solarized-light', label: 'Solarized Light', icon: 'sun', dark: false, swatch: ['#fdf6e3', '#475b62'] }
-] as const satisfies readonly { value: string; label: string; icon: 'monitor' | 'moon' | 'sun'; dark: boolean; swatch: readonly [string, string] | null }[];
-export type Theme = (typeof THEMES)[number]['value'];
-/** The app's own, which the stylesheet has without being told which. */
-const OWN: Theme[] = ['system', 'dark', 'light'];
+export const MODES = [
+	{ value: 'light', label: 'Light', icon: 'sun' },
+	{ value: 'dark', label: 'Dark', icon: 'moon' },
+	{ value: 'system', label: 'System', icon: 'monitor' }
+] as const satisfies readonly { value: string; label: string; icon: IconName }[];
+export type Mode = (typeof MODES)[number]['value'];
+
+/** A look on one of its two pages, for showing the choice: the page, what is written on it, and the app's own color there. */
+type Side = readonly [page: string, text: string, brand: string];
+/** The app's own color where a look does not say one (`--brand` in `app.css`). */
+const SAGE = { dark: '#b3c7a1', light: 'oklch(0.56 0.075 135)' } as const;
+
+/**
+ * The looks there are. The first is the app's own, which the stylesheet has
+ * without being told which. The rest are each no more than a page color and a
+ * text color, twice: for a dark page and for a light one (`app.css`, "Looks",
+ * where the same colors are said to the stylesheet; they are here only for
+ * showing the choice).
+ *
+ * Added to at the end: a list that is looked at does not change its order as
+ * it grows.
+ */
+export const LOOKS = [
+	{ value: 'own', label: 'Default', dark: ['#111113', '#eeeef0', SAGE.dark], light: ['#fafbfa', '#1c1f1c', SAGE.light] },
+	{ value: 'paper', label: 'Paper', dark: ['#191713', '#e6dfd0', SAGE.dark], light: ['#f5efe3', '#2a251d', SAGE.light] },
+	{ value: 'terminal', label: 'Terminal', dark: ['#060a06', '#b6efb6', SAGE.dark], light: ['#eef5ea', '#17381a', SAGE.light] },
+	{ value: 'nord', label: 'Nord', dark: ['#2e3440', '#eceff4', '#88c0d0'], light: ['#eceff4', '#2e3440', '#4f6f98'] },
+	{ value: 'solarized', label: 'Solarized', dark: ['#002b36', '#a5b3b3', '#2f9be0'], light: ['#fdf6e3', '#475b62', '#1f6fa8'] }
+] as const satisfies readonly { value: string; label: string; dark: Side; light: Side }[];
+export type Look = (typeof LOOKS)[number]['value'];
+/** The app's own look, worn when no other is: the page says nothing of it. */
+const OWN: Look = 'own';
+
+type Wearing = { mode: Mode; look: Look };
 
 /**
  * How the app looks on this machine: light or dark, in which look, and in
  * what face. Kept in this browser (it is about the screen in front of you)
  * and put back as soon as the app loads. `app.html` reads all of it before
  * the first paint, so there is no flash; this is the same choice, held where
- * the app can change it.
+ * the app can change it. Keep the two in step.
+ *
+ * (What was kept when there was one list, `theme`, is turned into a mode and
+ * a look by `app.html`, which has run by the time this is read.)
  */
 class Appearance {
 	/** As the system has it, light or dark, until another is chosen. */
-	theme = $state<Theme>('system');
+	mode = $state<Mode>('system');
+	look = $state<Look>(OWN);
+	/** Whether the page is dark just now, whatever was asked for: for drawing a look as it would be. */
+	dark = $state(false);
 
 	constructor() {
-		const known = THEMES.find((x) => x.value === recall('theme'));
-		if (known) this.theme = known.value;
+		this.mode = MODES.find((m) => m.value === recall('mode'))?.value ?? 'system';
+		this.look = LOOKS.find((l) => l.value === recall('look'))?.value ?? OWN;
 		if (typeof window === 'undefined') return;
 		// Following the system means following it when it changes, too.
 		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => this.apply());
@@ -272,33 +297,38 @@ class Appearance {
 	}
 
 	/** What is being tried on in Settings before it is saved; null when nothing is. */
-	private trying: { theme: Theme } | null = null;
+	private trying: Wearing | null = null;
 
 	/** Put it on the page: light or dark, and which look. */
 	apply() {
 		if (typeof window === 'undefined') return;
-		const theme = this.trying?.theme ?? this.theme;
-		const dark = theme === 'system' ? window.matchMedia('(prefers-color-scheme: dark)').matches : THEMES.find((t) => t.value === theme)!.dark;
+		const { mode, look } = this.trying ?? this;
+		// "System" is something asked for, never something the page is: what it comes to is worked out here.
+		const dark = mode === 'system' ? window.matchMedia('(prefers-color-scheme: dark)').matches : mode === 'dark';
+		// The class is set from what was just worked out, not from `this.dark` read back. This also runs as Settings
+		// is taken down, and a state read then is as it was before: a light page tried on and thrown away stayed light.
+		this.dark = dark;
 		document.documentElement.classList.toggle('dark', dark);
-		// A named look says which it is, for the stylesheet to dress the page by; the app's own say nothing.
-		if (OWN.includes(theme)) delete document.documentElement.dataset.theme;
-		else document.documentElement.dataset.theme = theme;
+		// A look says which it is, for the stylesheet to dress the page by; the app's own says nothing.
+		if (look === OWN) delete document.documentElement.dataset.look;
+		else document.documentElement.dataset.look = look;
 	}
 
 	/**
-	 * Wear a theme without keeping it: the whole app is the only honest
-	 * picture of light against dark. `null` puts the saved one back.
+	 * Wear a mode and a look without keeping them: the whole app is the only
+	 * honest picture of light against dark. `null` puts the saved ones back.
 	 */
-	try(wearing: { theme: Theme } | null) {
+	try(wearing: Wearing | null) {
 		this.trying = wearing;
 		this.apply();
 	}
 
-	setTheme(theme: Theme) {
-		this.theme = theme;
-		remember('theme', theme);
-		// And whether it is a dark one, for `app.html`, which dresses the page before any of this is loaded.
-		remember('theme:dark', THEMES.find((t) => t.value === theme)!.dark ? '1' : '0');
+	/** Keep a mode, a look, or both. */
+	set({ mode = this.mode, look = this.look }: Partial<Wearing>) {
+		this.mode = mode;
+		this.look = look;
+		remember('mode', mode);
+		remember('look', look);
 		this.apply();
 	}
 }

@@ -85,6 +85,11 @@
 	--brand: #b3c7a1;
 	/* What is written on the app's own color where it is a fill: white on a light page; on a dark one the page's own color, which reads on every look's. */
 	--on-brand: #ffffff;
+	/* Words in the app's own color. `--brand` is a fill, and a fill is not safe as text: the sage that reads on a dark
+	   page is a pale wash on a light one. So text in it is a step toward the page's own text, which lifts it on a dark
+	   page and sets it deeper on a light one, on every look, with the one line. These three are all the steps there
+	   are: nothing in the seed fills a button with brand, so there is no step for a fill under the pointer. */
+	--brand-ink: color-mix(in oklab, var(--brand) 60%, var(--g12));
 	--foreground: var(--g12);
 	--card-foreground: var(--g12);
 	--popover-foreground: var(--g12);
@@ -129,27 +134,46 @@
 	--on-brand: var(--background);
 }
 
-/* ── Named looks ──────────────────────────────────────────────────────────
- * Other pages to wear (the list is in `ui.svelte.ts`, and it is chosen in
- * Settings). Each is two colors and no more: its page (`--tb`) and its text
- * (`--tf`). The twelve grays are mixed from those two, so nothing in a look
- * can be a gray that does not belong to its page; and everything downstream
- * of the grays (borders, cards, the sidebar) follows with no word said here.
- * A light one may also say what its lifted surfaces are (`--tl`): white, if
- * it does not. One may say how strong its muted text is (`--tm`), where its
- * text is pale to begin with, and give the app's own color (`--brand`).
- * Whether a look is light or dark is the `dark` class, as for the app's own
- * two.
+/* ── Looks ────────────────────────────────────────────────────────────────
+ * Other pages to wear (the list is in `ui.svelte.ts`, and one is chosen in
+ * Settings, under the switch for light and dark).
  *
- * A few, to show the ways one can be made. A new look is a line here and a
- * line in `THEMES`. */
-:root[data-theme='paper'] { --tb: #f5efe3; --tf: #2a251d; --tl: #fbf7ee; }
-:root[data-theme='novel'] { --tb: #191713; --tf: #e6dfd0; }
-:root[data-theme='terminal'] { --tb: #060a06; --tf: #b6efb6; }
-:root[data-theme='nord'] { --tb: #2e3440; --tf: #eceff4; --brand: #88c0d0; }
-:root[data-theme='solarized-light'] { --tb: #fdf6e3; --tf: #475b62; --tl: #fffbf0; --brand: #1f6fa8; --tm: 86%; }
+ * A look is two colors, twice: its page (`--tb`) and its text (`--tf`), for a
+ * dark page and for a light one. Light or dark is the `dark` class and is not
+ * the look's to say, so the switch means the same thing whichever look is on,
+ * and a page that follows the system follows it in any of them. A look used
+ * to be one of the two (Paper was light, Nord was dark): choosing a look then
+ * chose light or dark with it, and System meant nothing once one was on.
+ *
+ * The twelve grays are mixed from the two colors, so nothing in a look can be
+ * a gray that does not belong to its page; and everything downstream of the
+ * grays (borders, cards, the sidebar) follows with no word said here.
+ *
+ * A page may also say the app's own color on it (`--brand`), and how strong
+ * its muted text is (`--tm`) where its text is pale to begin with. A light
+ * page may say what is lifted off it (`--tl`): white, if it does not.
+ *
+ * Each page is its own line and says all of its own. Written as one line for
+ * the look and a second that changes it for light, whatever the first says
+ * and the second does not (a `--tm`, a `--brand`) is worn on the light page
+ * too.
+ *
+ * A few, to show the ways one can be made. A new look is two lines here and
+ * one in `LOOKS`. */
+/* The least a look can be: two colors, twice. Its light page says what is lifted, since white on cream is a hole. */
+:root.dark[data-look='paper'] { --tb: #191713; --tf: #e6dfd0; }
+:root:not(.dark)[data-look='paper'] { --tb: #f5efe3; --tf: #2a251d; --tl: #fbf7ee; }
+/* Text that is a color: the grays mixed from it are that color too. */
+:root.dark[data-look='terminal'] { --tb: #060a06; --tf: #b6efb6; }
+:root:not(.dark)[data-look='terminal'] { --tb: #eef5ea; --tf: #17381a; --tl: #f8fcf5; }
+/* Its own color on each page: the frost that reads on its dark page is deeper on its light one. */
+:root.dark[data-look='nord'] { --tb: #2e3440; --tf: #eceff4; --brand: #88c0d0; }
+:root:not(.dark)[data-look='nord'] { --tb: #eceff4; --tf: #2e3440; --tl: #f8f9fb; --brand: #4f6f98; --tm: 70%; }
+/* Text that is pale to begin with, on both pages: its muted text is mixed stronger, or it is not read. */
+:root.dark[data-look='solarized'] { --tb: #002b36; --tf: #a5b3b3; --brand: #2f9be0; --tm: 87%; }
+:root:not(.dark)[data-look='solarized'] { --tb: #fdf6e3; --tf: #475b62; --tl: #fffbf0; --brand: #1f6fa8; --tm: 86%; }
 
-:root.dark[data-theme] {
+:root.dark[data-look] {
 	--g1: var(--tb);
 	--g2: color-mix(in oklab, var(--tf) 4%, var(--tb));
 	--g3: color-mix(in oklab, var(--tf) 8%, var(--tb));
@@ -164,7 +188,7 @@
 	--g12: var(--tf);
 }
 /* On a light page 1 is what is lifted and 2 is the page (see the top of this file), so the page's color is 2. */
-:root:not(.dark)[data-theme] {
+:root:not(.dark)[data-look] {
 	--g1: var(--tl, #ffffff);
 	--g2: var(--tb);
 	--g3: color-mix(in oklab, var(--tf) 5%, var(--tb));

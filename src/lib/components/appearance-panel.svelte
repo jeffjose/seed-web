@@ -3,67 +3,72 @@
 	import SettingGroup from '$lib/components/setting-group.svelte';
 	import SettingRow from '$lib/components/setting-row.svelte';
 	import { Icon } from '$lib/icon';
-	import { ui, appearance, THEMES, type Theme } from '$lib/ui.svelte';
+	import { ui, appearance, MODES, LOOKS, type Mode, type Look } from '$lib/ui.svelte';
+	import { SEG, SEG_ITEM, SEG_ON, SEG_OFF } from '$lib/seg';
 	import { FONTS, fontOf } from '$lib/fonts';
 	import * as Select from '$lib/components/ui/select';
 	import { Button } from '$lib/components/ui/button';
 
 	/**
-	 * How the app looks on this machine: light or dark, in whose colors, and
-	 * in what face.
+	 * How the app looks on this machine: light or dark, in which look, and in
+	 * what face.
 	 *
-	 * The theme is not kept until you press Save. Until then it is tried on,
-	 * on the whole app (there is no smaller honest picture of light against
-	 * dark). Leaving without saving puts it back. The face is kept as soon as
-	 * it is chosen: it is gone through one after another to be compared, and
-	 * a Save between each would be in the way.
+	 * Light or dark is a switch, and the looks are under it: two choices, and
+	 * neither changes the other.
+	 *
+	 * Neither is kept until you press Save. Until then it is tried on, on the
+	 * whole app (there is no smaller honest picture of light against dark).
+	 * Leaving without saving puts it back. The face is kept as soon as it is
+	 * chosen: it is gone through one after another to be compared, and a Save
+	 * between each would be in the way.
 	 */
-	let theme = $state<Theme>(appearance.theme);
+	let mode = $state<Mode>(appearance.mode);
+	let look = $state<Look>(appearance.look);
 	// Changed from somewhere else (the search over everything) with nothing tried on here: follow it.
-	let was = appearance.theme;
+	let was = { mode: appearance.mode, look: appearance.look };
 	$effect(() => {
-		const saved = appearance.theme;
-		if (theme === was) theme = saved;
+		const saved = { mode: appearance.mode, look: appearance.look };
+		if (mode === was.mode) mode = saved.mode;
+		if (look === was.look) look = saved.look;
 		was = saved;
 	});
 
-	const dirty = $derived(theme !== appearance.theme);
+	const dirty = $derived(mode !== appearance.mode || look !== appearance.look);
 
-	function tryTheme(t: Theme) {
-		theme = t;
-		// What is chosen goes on the whole app at once, to be seen; it is kept on Save.
-		appearance.try(theme === appearance.theme ? null : { theme });
+	/** What is chosen goes on the whole app at once, to be seen; it is kept on Save. */
+	function wear(next: { mode?: Mode; look?: Look }) {
+		mode = next.mode ?? mode;
+		look = next.look ?? look;
+		appearance.try(mode === appearance.mode && look === appearance.look ? null : { mode, look });
 	}
 	function save() {
-		appearance.setTheme(theme);
+		appearance.set({ mode, look });
 		appearance.try(null);
 	}
 	function discard() {
-		theme = appearance.theme;
+		mode = appearance.mode;
+		look = appearance.look;
 		appearance.try(null);
 	}
 	// Unsaved here is unsaved in Settings: its one bar keeps it or throws it away.
 	$effect(() => ui.pend('appearance', dirty ? { save, discard } : null));
-	// Left with a theme tried on and not saved: take it off.
+	// Left with something tried on and not saved: take it off.
 	onDestroy(() => {
 		ui.pend('appearance', null);
 		appearance.try(null);
 	});
 
-	/** The system's look is whichever of the app's own two the system is in. */
-	const systemDark = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
-	const colors = (t: (typeof THEMES)[number]) => t.swatch ?? THEMES.find((x) => x.value === (systemDark ? 'dark' : 'light'))!.swatch!;
-	const shown = $derived(THEMES.find((t) => t.value === theme) ?? THEMES[0]);
-
 	/** The font before or after the one worn, round and round. */
 	const fontBy = (step: number) => appearance.setFont(FONTS[(FONTS.findIndex((f) => f.key === appearance.font) + step + FONTS.length) % FONTS.length].key);
 </script>
 
-<!-- A look, as a small picture of itself: its page, and two lines of its text. -->
-{#snippet tile(t: (typeof THEMES)[number])}
-	{@const on = theme === t.value}
-	{@const [page, ink] = colors(t)}
-	<button onclick={() => tryTheme(t.value)} aria-pressed={on} class="group/look block w-full text-left outline-none">
+<!-- A look, as a small picture of itself on the page it would have just now, light or dark: its page, two lines of
+     its text, and a dot of the app's own color there. Drawn on its dark page while the app is light, a tile shows
+     a page that pressing it does not give. -->
+{#snippet tile(l: (typeof LOOKS)[number])}
+	{@const on = look === l.value}
+	{@const [page, ink, brand] = appearance.dark ? l.dark : l.light}
+	<button onclick={() => wear({ look: l.value })} aria-pressed={on} class="group/look block w-full text-left outline-none">
 		<span
 			class="relative block h-16 overflow-hidden rounded-xl ring-1 transition-shadow {on
 				? 'ring-2 ring-foreground'
@@ -71,33 +76,41 @@
 			style="background: {page}"
 		>
 			<span class="absolute left-2.5 top-2.5 flex items-center gap-1.5">
-				<span class="size-3 rounded-full" style="background: {ink}; opacity: 0.35"></span>
+				<span class="size-3 rounded-full" style="background: {brand}"></span>
 				<span class="h-1.5 w-14 rounded-full" style="background: {ink}; opacity: 0.7"></span>
 			</span>
 			<span class="absolute left-[1.6rem] top-[1.55rem] h-1.5 w-20 rounded-full" style="background: {ink}; opacity: 0.3"></span>
 			<span class="absolute left-[1.6rem] top-[2.4rem] h-1.5 w-12 rounded-full" style="background: {ink}; opacity: 0.3"></span>
-			{#if t.value === 'system'}
-				<span class="absolute bottom-1.5 right-2" style="color: {ink}; opacity: 0.6"><Icon name="monitor" class="size-3.5" /></span>
-			{/if}
 			{#if on}
 				<span class="absolute right-1.5 top-1.5 grid size-4 place-items-center rounded-full bg-foreground text-background">
 					<Icon name="check" class="size-3" />
 				</span>
 			{/if}
 		</span>
-		<span class="mt-1.5 block truncate text-[13px] {on ? 'font-medium' : 'text-muted-foreground'}">{t.label}</span>
+		<span class="mt-1.5 block truncate text-[13px] {on ? 'font-medium' : 'text-muted-foreground'}">{l.label}</span>
 	</button>
 {/snippet}
 
 <SettingGroup title="Theme">
-	{#snippet aside()}
-		<span class="text-[13px] text-muted-foreground">{shown.label}</span>
-	{/snippet}
-	<div class="mt-2 grid grid-cols-[repeat(auto-fill,minmax(9rem,1fr))] gap-3">
-		{#each THEMES as t (t.value)}
-			{@render tile(t)}
-		{/each}
-	</div>
+	<SettingRow title="Mode" description="System is light or dark as this machine is.">
+		<div class="{SEG} w-72" role="group" aria-label="Mode">
+			{#each MODES as m (m.value)}
+				<button onclick={() => wear({ mode: m.value })} aria-pressed={mode === m.value} class="{SEG_ITEM} flex items-center justify-center gap-1.5 {mode === m.value ? SEG_ON : SEG_OFF}">
+					<Icon name={m.icon} class="size-3.5" />{m.label}
+				</button>
+			{/each}
+		</div>
+	</SettingRow>
+	<SettingRow title="Look" description="Each has a light page and a dark one.">
+		<span class="text-[13px] text-muted-foreground">{LOOKS.find((l) => l.value === look)?.label}</span>
+		{#snippet below()}
+			<div class="grid grid-cols-[repeat(auto-fill,minmax(9rem,1fr))] gap-3">
+				{#each LOOKS as l (l.value)}
+					{@render tile(l)}
+				{/each}
+			</div>
+		{/snippet}
+	</SettingRow>
 </SettingGroup>
 
 <SettingGroup title="Type">

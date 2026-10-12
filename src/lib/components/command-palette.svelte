@@ -6,7 +6,7 @@
 	import { Icon } from '$lib/icon';
 	import type { IconName } from '$lib/icons';
 	import { ACTION, PLACES } from '$lib/nav';
-	import { ui, appearance, SETTINGS_SECTIONS, THEMES } from '$lib/ui.svelte';
+	import { ui, appearance, SETTINGS_SECTIONS, MODES, LOOKS } from '$lib/ui.svelte';
 
 	/**
 	 * Going anywhere, from anywhere: ⌘K (or the search box in the sidebar),
@@ -35,12 +35,11 @@
 		{ label: 'Toggle right panel', icon: 'panel-right', words: 'hide show fold inspector details', hint: '⌘I', run: () => (ui.inspector = !ui.inspector) },
 		{ label: 'Toggle bottom bar', icon: 'chevron-up', words: 'hide show fold dock activity log', hint: '⌘`', run: () => (ui.dockOpen = !ui.dockOpen) }
 	];
-	const LOOK: Doing[] = THEMES.map((t) => ({
-		label: `Theme: ${t.label}`,
-		icon: t.icon,
-		words: 'appearance dark light mode',
-		run: () => appearance.setTheme(t.value)
-	}));
+	// Light or dark, and the look: two choices here as in Settings, and each is kept as it is chosen.
+	const LOOK: Doing[] = [
+		...MODES.map((m) => ({ label: `Mode: ${m.label}`, icon: m.icon, words: 'appearance theme dark light system', run: () => appearance.set({ mode: m.value }) })),
+		...LOOKS.map((l) => ({ label: `Look: ${l.label}`, icon: 'palette' as const, words: 'appearance theme colors', run: () => appearance.set({ look: l.value }) }))
+	];
 	const SETTINGS: Doing[] = [
 		{ label: 'Open settings', icon: 'sliders-horizontal', words: 'preferences options', run: () => (ui.settings = 'appearance') },
 		...SETTINGS_SECTIONS.map((s) => ({ label: s.label, icon: s.icon, words: `settings ${s.words}`, run: () => (ui.settings = s.key) }))

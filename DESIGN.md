@@ -23,6 +23,7 @@ shell and brought back here.
 11. [Patterns for what you build](#11-patterns-for-what-you-build)
 12. [Words](#12-words)
 13. [Tried and thrown away](#13-tried-and-thrown-away)
+14. [Learned in the apps, and not yet in the seed](#14-learned-in-the-apps-and-not-yet-in-the-seed)
 
 ---
 
@@ -206,6 +207,16 @@ in `app.css`, with a deeper one for the light page.
 page, the page's own color on a dark one, because white on brand does not read
 on every look.
 
+`--brand-ink` is words in brand. **`--brand` is a fill and is not safe as
+text:** the sage that reads on a dark page is a pale wash on a light one. The
+ink is brand mixed 60% into the page's text, which lifts it on a dark page and
+sets it deeper on a light one, in every look, with one line.
+
+Those three are all the steps there are. An app that fills buttons with its
+color wants a fourth, the fill under the pointer; nothing in the seed is
+filled with brand, and a step that nothing uses is one more to keep right in
+every look.
+
 ### Status colors are reserved
 
 Four states (`ok`, `run`, `warn`, `fail`), four hues, and nothing that is not
@@ -239,26 +250,36 @@ For whatever has a color of its own: a person, a project, a label.
   softer step text is set in makes every one look pale beside what choosing it
   gives.
 
-### Themes
+### Themes: light or dark, and the look
 
+- **Light or dark is one choice and the look is another.** A switch (Light,
+  Dark, System), and under it the looks. They were one list once, with light
+  looks and dark looks in it: choosing a look chose light or dark with it, and
+  System meant nothing once a look was on.
 - **`dark:` follows the page's class, not the system:** `@custom-variant dark
   (&:where(.dark, .dark *))`. "A light look on a dark machine is light all
-  through."
-- **The system's light or dark is the default** with no stored preference.
-- **No flash:** an inline script in `app.html` sets the class, the look and
-  the face before first paint, and an inline style gives `html` its page
-  color. "The page is its own color from the first thing drawn."
+  through." The class is the only switch there is: `html.dark` or not, never
+  "system", which is something asked for and has been worked out by then.
+- **The system's light or dark is the default** with no stored preference,
+  and is followed as it changes, in any look.
+- **No flash:** an inline script in `app.html` sets the class, the look
+  (`html[data-look]`) and the face before first paint, and an inline style
+  gives `html` its page color. "The page is its own color from the first
+  thing drawn." `Appearance` in `ui.svelte.ts` is the same choice a moment
+  later; keep the two in step.
 - **`color-scheme` follows the class,** so the browser's own parts (a
   scrollbar, a date field, autofill) match.
-- **A named look is two colors:** its page (`--tb`) and its text (`--tf`). The
-  twelve grays are mixed from those two in oklab, "so nothing in a look can be
-  a gray that does not belong to its page." Optional: `--tl` (lifted surface on
-  light), `--tm` (muted-text strength, for a look whose text is pale to begin
-  with), `--brand`.
+- **A look is two colors, twice:** its page (`--tb`) and its text (`--tf`),
+  for a dark page and for a light one. Every look has both, so the switch
+  means the same thing whichever look is on. The twelve grays are mixed from
+  the two in oklab, "so nothing in a look can be a gray that does not belong
+  to its page." A page may also say `--brand`, and `--tm` (muted-text
+  strength, for text that is pale to begin with); a light page may say `--tl`
+  (what is lifted off it; white, if it does not).
 
-  | Step | Dark look, % of text in page | Light look |
+  | Step | On its dark page, % of text in page | On its light page |
   |---|---|---|
-  | g1 | page | lifted (white) |
+  | g1 | page | lifted (`--tl`, or white) |
   | g2 | 4 | page |
   | g3 | 8 | 5 |
   | g4 | 11 | 8 |
@@ -271,11 +292,29 @@ For whatever has a color of its own: a person, a project, a label.
   | g11 | 68 (`--tm`) | 66 (`--tm`) |
   | g12 | text | text |
 
-  The seed has five, to show the ways one can be made. A new look is one line
-  in `app.css` and one in `THEMES` (`ui.svelte.ts`).
-- **A theme is tried on the whole app** and kept on Save: "there is no smaller
-  honest picture of light against dark."
-- **Kept in the browser**, since it is about the screen in front of you.
+  The two columns are the two ramp blocks in `app.css`, and one look feeds
+  both.
+- **Each page of a look is its own line and says all of its own:**
+  `:root.dark[data-look='x']` and `:root:not(.dark)[data-look='x']`. Written
+  as one line for the look and a second that changes it for light, whatever
+  the first says and the second does not (a `--tm`, a `--brand`) is worn on
+  the light page too.
+- **The app's own look says nothing.** With no `data-look` the page is in the
+  two ramps written out above; it is the first in the list, as "Default".
+- The seed has four besides its own, to show the ways one can be made: Paper
+  (the least a look can be), Terminal (text that is a color), Nord (its own
+  color on each page), Solarized (pale text, so `--tm`). A new look is two
+  lines in `app.css` and one in `LOOKS` (`ui.svelte.ts`), added at the end: a
+  list that is looked at does not change its order as it grows.
+- **A tile shows a look on the page it would have just now.** Drawn on its
+  dark page while the app is light, a tile shows a page that pressing it
+  does not give.
+- **Mode and look are tried on the whole app** and kept on Save: "there is no
+  smaller honest picture of light against dark."
+- **Kept in the browser** (`mode`, `look`), since it is about the screen in
+  front of you. What was kept when there was one list (`theme`) is turned
+  into the same look on the page it had, by the script in `app.html`, the
+  first time it is read.
 
 ---
 
@@ -331,7 +370,7 @@ terminal's panel is brought up".
 back a pane you closed, or closes one you opened, is the app undoing you."
 
 - **Kept:** sidebar open and width, right pane open and width, dock height and
-  tab, theme and face.
+  tab, light or dark, the look, and the face.
 - **Deliberately not kept:** the right pane's expanded state ("it is for the
   moment") and the dock being open.
 - **Settings is the end of the address** (`#settings/shortcuts`), not a route:
@@ -731,5 +770,261 @@ Worth knowing so they are not tried again.
 | A fetched face as the default | The app comes up in the face kept with it |
 | Dark whatever the system said | Light or dark as the system is, until told |
 | Slate as the light ramp | Cold, and nothing stood off anything else |
+| One list of themes with light and dark looks in it | Choosing a look chose light or dark with it, and System meant nothing under a look. A switch, and the looks under it |
 | White text on brand in every look | Did not read on several. `--on-brand` |
 | A picture in a lightbox inside a frame | It is shown as itself |
+
+---
+
+## 14. Learned in the apps, and not yet in the seed
+
+Found while bringing this design into two apps: `envelope`, which was built on
+the seed, and `kpopidols` (aegyo.gg), an older app that took it on whole in
+2026-10 — server-rendered, Tailwind 3, 160 icons. Each is a rule the seed does
+not keep yet, or a place where the seed and an app say different things. They
+are here so that the next app does not find them again; a line moves up into
+its own section when the seed's code keeps it.
+
+### Hints
+
+- **A hint has to be said to a screen reader too.** `data-tip` puts words on
+  the screen and nowhere else: a control whose old `title` said something its
+  label did not lost that description when it became a `data-tip`. While a hint
+  is up, the thing it is about is given `aria-describedby` pointing at the
+  bubble (one bubble, so only while it is up). An icon-only control still needs
+  its `aria-label`: the hint is said after a name, not in place of one.
+  _In kpopidols' `Tooltips.svelte`. Not in the seed's._
+- **An icon-only control with a name has a hint without asking.** §7 says the
+  size of a hint is chosen by what the control is; the same goes for whether it
+  has one. A `button` or link with an `aria-label`, no text and no `data-tip`
+  is hinted with its name. kpopidols had forty icon buttons over its board that
+  nobody had written a hint for, and "every icon-only control should have one"
+  is a rule kept by remembering. Not for a control bigger than a control (about
+  56px): the two halves of a photograph that page it are buttons with names,
+  and a label following the pointer across a picture is not a hint.
+- **The fold button has no hint while the sidebar is folded.** The hint has no
+  room above the corner, so it goes below — onto the head of the peek the same
+  hover has just brought up. Folded, the peek is the answer.
+- **Not said yet:** which hint wins where one thing with a hint is inside
+  another (the nearest does, as the code has it), and whether a hint may sit on
+  something that is not a control.
+
+### Icons
+
+- **A class that says no size keeps the default.** `icon.svelte` takes
+  `class = 'size-4'`, so `class={lit ? 'text-brand' : ''}` drops the size with
+  the color and the icon comes out at the svg's own 24px. The component should
+  add `size-4` whenever the class names no size.
+- **The sizes in §6 have no names.** 15px and 18px are not Tailwind steps; they
+  are `size-[15px]` and `size-[18px]`. The sections of Settings are 19px in
+  envelope and 16px here (below).
+- **What an icon takes.** Only `name`, `class` and `fill`. An `aria-hidden` or
+  a `style` on one is a type error, and a color that comes from data has to be
+  written as a class. Either the component passes the rest through to the svg,
+  or §6 says: wrap it.
+- **The 14px floor has no word for a mark inside a small disc** (a 12px glyph
+  in a 20px badge over a picture, a plus in a 14px dot). Apps have been
+  deciding these one at a time.
+- **The fold button's line is on the wrong side.** Solar's `sidebar-minimalistic`
+  and `siderbar` both draw their line at the right, so `panel-left` — the
+  button for the panel on the left — shows one on the right. kpopidols draws
+  its own, in Solar's frame, with the line at x=9.
+- **Line weight is said once.** envelope's Settings sets `[stroke-width:1.75]`
+  on its section icons. It does nothing (the drawing's own attribute wins
+  inside a `<use>`), and if it did it would be a second weight of line.
+- **Past a hundred icons, the file is written by a script.** "Copy its body
+  and set its stroke-width" is right for forty. kpopidols keeps the list of
+  picks (Lucide's name, the Solar glyph, its own drawings) in a script that
+  writes the file; the result is the same thing, written out and committed,
+  with no lookup at run time.
+
+### Settings
+
+The seed's dialog and envelope's have come apart, and envelope's is the one
+that has been lived in:
+
+| | Seed | envelope |
+|---|---|---|
+| Frame | `max-w-6xl` | `max-w-5xl` |
+| Sections | `w-56` | `w-60` |
+| "Settings" | 15px medium | 17px semibold |
+| A section | `h-9`, 13.5px, `gap-2.5` | `h-10`, 14.5px, `gap-3` |
+| Its icon | 16px | 19px |
+
+- **The × scrolls away.** It is `absolute` inside the pane that scrolls, so a
+  long section (shortcuts) takes it out of reach. It belongs to the dialog.
+- **`setting-row` has no place under its control** (the one line a segmented
+  choice says about what is lit) and takes only a string for its name;
+  `setting-group` has no `info`. Rows that needed either were written by hand,
+  with the same hairline and padding copied out.
+- **Two rows that should be one.** `setting-row` is `border-border/60 py-4`;
+  the list of shortcuts in envelope is `divide-border/50 min-h-11 py-1.5`.
+- **A key cap is not in `styles.ts`.** envelope defines `KEY` inside its
+  shortcuts panel. (kpopidols: `KEY` in `styles.ts`.)
+- **`empty.svelte` puts what it is given inside a `<p>`,** so "what can be done
+  about it goes under the words" cannot be a button without a wrapper beside
+  it. It wants an `action` snippet.
+- **Nothing says what Settings does on a phone.** kpopidols folds the sections
+  to a strip of icons under `sm`.
+
+### The sidebar
+
+- **A row of a list has no name.** §5 says how a place is drawn and nothing of
+  the lists under the places (labels, people, channels), which is most of a
+  real sidebar. envelope's is `flex h-8 items-center gap-2 rounded-md px-2
+  text-[14px]`, its icon `size-4 opacity-60`, a count at 12px, quiet until it
+  is the one you are on, and regular weight where a place is medium. kpopidols
+  has it as `SHELF_ROW` / `SHELF_ROW_ON` in `styles.ts`.
+- **A section's name is set three ways.** `HEADING` is 12px medium; the comment
+  at the head of `styles.ts` still says "11px caps"; envelope's sidebar sets
+  its section heads 11.5px semibold, in capitals, letters apart.
+- **Row tools take room in envelope.** §11 says they are laid over the row and
+  take none; envelope's list row keeps `pr-8` for one. And the rule does not
+  say what ground a tool laid over a row stands on: the row under the pointer
+  is `bg-sidebar-accent/60`, which is see-through, so a tool that has to match
+  it must work the color out again for each ground it is over (the sidebar,
+  the peek). A ground under the pointer that is not see-through would end that.
+- **The gap in a row is not said:** `gap-2` in the stock menu button and in
+  envelope's rows, `gap-2.5` in the search box.
+
+### Numbers
+
+No tabular figures, and no exceptions. §3 and §13 say so; envelope still sets
+`tabular-nums` on the counts in its sidebar, and kpopidols had it on a hundred
+and eighty counters that tick while you watch, on the argument that a number
+that changes in place should not shift. Asked, the answer was: "don't use
+tabular font, use regular always." It is out of kpopidols; envelope has not
+been gone through.
+
+### Lists, dialogs and states
+
+- **The way out of a dialog is drawn once, in the dialog.** The stock part's ×
+  is 24px with its name as hidden text inside it — which makes it "a control
+  with words" to the hint layer, so the one icon button in the app with no
+  hint — and Settings and other dialogs each hid it and drew their own 32px
+  round one. It belongs in `dialog-content.svelte`: 32px, round, `aria-label`,
+  `data-tip="Close (Esc)"`.
+- **"This is on" is not "this is chosen".** A list of things that can be
+  running (modes, filters) needs both at once: the row the keys are on, and the
+  row that is on. The chosen row has the ground (`foreground/[0.09]`); the one
+  that is on has its mark in its own color and the word "On" at its end, so the
+  two can be the same row or different ones.
+- **One line a row, except a setting.** §11 says a row is never a title over a
+  subtitle; `setting-row` is exactly that, on purpose. The rule is for lists of
+  things; a setting is a name and what it does.
+- **A dialog's one button may be filled.** §11 says buttons inside content are
+  outlined and none the loudest; §3 allows one filled button on a page. A
+  dialog is a page for this: the button that does what the dialog is for is
+  filled, and it is the only one.
+- **The radius of an ordinary dialog is not said.** Settings is `rounded-3xl`
+  and the palette `rounded-2xl`; the stock dialog is whatever shadcn gave it.
+  kpopidols: `rounded-xl` stock, `rounded-2xl` for a dialog with panes.
+- **A section with one thing in it has no heading.** A heading over a single
+  row repeats the row.
+- **A cluster of buttons ends in the ellipsis.** Where a row has several icon
+  buttons (a card's head, a toolbar), they are one group on one ground that
+  comes up under the pointer, 28px each with a 15px glyph, and "···" is the
+  last of them. Loose along the row with a gap each, they read as marks and
+  not as controls. What the row *says* (a name, a count) keeps to the other
+  end, and the slack is between the two.
+- **One corner, one row.** Two things pinned to the same corner of a picture
+  (a count, and a star that arrives under the pointer) will land on each other
+  the day either grows. They are one flex row in that corner.
+
+### Found by auditing an app against this file
+
+A page-by-page audit of kpopidols, after it had been "moved onto the seed",
+found eighteen places that had not been. What they had in common is what the
+seed does not yet say:
+
+- **The stock parts are where the old design hides.** Every dropdown, context
+  menu, select and popover was still `rounded-md border shadow-md` with a
+  tracked-capitals label, because nobody opens `ui/` when restyling a page.
+  The seed should ship them on one surface (`rounded-xl`, the lifted ground, a
+  hairline ring, a deep shadow) with one row (32px, 13px, a 16px leading slot,
+  words on one line whether a row has an icon or not) and say so in §10.
+- **States are where it hides next:** the empty board, a tile whose picture
+  failed, the error page, the page a payment returns to, the sheet on a phone.
+  §10 has an empty state; it has no failed picture (the tile's ground and a
+  quiet mark, never the browser's glyph and alt text) and no error page.
+- **Two of anything is the old one and the new one.** Two pickers for adding
+  a feed, two palettes, two shortcut sheets: in each case the newer was right
+  and the older was still wired to some door. "One thing, said once" wants a
+  line about doors: when a part is replaced, find every way in.
+- **A page about one thing needs a head, and the seed has none.** `TITLE` is a
+  bar's name at 15px. A profile, a collection, a year has a name that is the
+  one large thing on the page: 24px medium, a quiet line under it, numbers as
+  14px medium with what they count at 12px, one filled button. Six pages had
+  set it six ways. (`page-frame.svelte` has a 26px title of its own in a
+  `<style>`; it should be a named style.)
+- **A chip is not written down.** A fact about a thing, sometimes a way to
+  everything else it is true of: 24px, a control's corner, 12px, quiet, and one
+  pressed as a whole brightens. Without it they were capsules.
+- **A picture that can be pressed** brightens (a shade down at rest, full
+  under the pointer). §13 says scaling was thrown away; nothing says what took
+  its place, so tiles kept scaling.
+- **Pages outside the shell** (sign in, terms, an error, a receipt) need the
+  shell's tokens, face and wordmark without the shell, and one of them is text
+  to be read. The seed has no such page and no part for one.
+- **Brand as "on".** §4 gives the app's color three jobs (what is picked, a
+  sign of change, a drag target). An app with something to follow adds a
+  fourth — *yours* — as a tint, and needs the rule that it is never a
+  decoration (a glow behind a number was one).
+
+### Light and dark, found the hard way
+
+- **Quiet text dimmed again with alpha does not carry to a light page.**
+  `text-muted-foreground/60` is the "ambient" step on dark (3.2–4.0 to 1) and
+  under 3 to 1 on every light page. A third step of text wants to be a gray of
+  its own, not an alpha on the second.
+- **A border is fainter on light at the same step.** Mixed to the seed's
+  proportions, step 6 is 1.4 to 1 on a light page and 1.4–1.65 on a dark one,
+  and reads softer than the numbers say. kpopidols uses 7 for borders on light.
+- **White on the app's own color fails on most looks.** On five of seven it
+  measured between 1.8 and 3.1 to 1. `--on-brand` has to be worked out from the
+  fill (black or white by its lightness), not assumed white.
+- **A class named for what it is, not what it looks like.** A footer line
+  classed `.tip` picked up the tooltip's surface the day the tooltip got a
+  class of that name. Global classes in `app.css` are few; a component's own
+  go in its `<style>`.
+- **Chrome over a photograph is not chrome on the page.** White words on a
+  dark scrim are right in both modes, because the picture is the ground. A
+  chip in the page's color at 70% with a blur under it is right in both too. A
+  photograph that fades into the page fades to `background`, never to black.
+
+### An app drawn on the server
+
+The seed is drawn in the browser (`ssr = false`). kpopidols is drawn on the
+server, and three things did not carry:
+
+- **The sheet of icons is a file, not part of the page.** In the page it is
+  sent again inside the HTML of every page, and once more inside the script
+  that hydrates it (97 KB, for 155 icons). As `icons.svg`, imported for its
+  address and pointed at with `<use href="{sheet}#icon-NAME">`, it is fetched
+  once and kept. The script gets only the names, for the type.
+- **What is remembered about the shell is in a cookie.** `localStorage` is read
+  after the server has drawn the page: the sidebar comes at its default width
+  and jumps, or open and then shut. Its open state and its width are cookies,
+  read on the server.
+- **State kept in a module is one value for every request.** `ui.svelte.ts`
+  holds the shell's state at module scope, which on a server is shared by
+  everybody. What the server draws comes from the request's own data; the
+  module's state is written in the browser only.
+
+### The pointer, where there are no layers
+
+The hand rule (§9) is in `@layer base`, so any utility outranks it. An app
+whose CSS has no layers (Tailwind 3) has to put it inside `:where()`, or it
+outranks `cursor-grab` on a row that is dragged; and the stock parts'
+`cursor-default` has to come off, since a class there outranks the rule.
+
+### Looks, where the tokens cannot be mixed in the stylesheet
+
+The seed mixes a look's grays in the stylesheet (`color-mix(in oklab, …)`,
+§4), and that gives a color. An app whose tokens are bare channels
+(Tailwind 3's `hsl(var(--background) / <alpha-value>)`) cannot take one: its
+tokens have to be three numbers. kpopidols mixes them ahead of time in a
+script (`pnpm looks`, from `looks.ts` to `looks.css`), in the same space and
+the same proportions as the table in §4, and commits what the script writes.
+A look is still a few lines in one file, and the page still does no work to
+wear it.
