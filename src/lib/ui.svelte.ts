@@ -1,7 +1,7 @@
 import { untrack } from 'svelte';
-import { pushState, replaceState } from '$app/navigation';
-import type { IconName } from '$lib/icons';
-import { KEPT, fontOf, hrefOf, wear } from '$lib/fonts';
+import { goto } from '$app/navigation';
+import type { IconName } from '#lib/icons.js';
+import { KEPT, fontOf, hrefOf, wear } from '#lib/fonts.js';
 
 /** View state kept on this machine. Storage can be unavailable; nothing here depends on it. */
 function recall(key: string): string | null {
@@ -129,10 +129,10 @@ class UiState {
 		if (to) {
 			const next = `#settings${to === FIRST ? '' : `/${to}`}`;
 			// Only the end of the address changes: nothing is navigated to.
-			if (at) replaceState(here + next, {});
+			if (at) void goto(here + next, { shallow: true, replace: true });
 			else {
 				this.settingsOver = true;
-				pushState(here + next, {});
+				void goto(here + next, { shallow: true });
 			}
 			this.hash = next;
 		} else if (this.settingsOver) {
@@ -140,7 +140,7 @@ class UiState {
 			this.settingsOver = false;
 			history.back();
 		} else {
-			replaceState(here, {});
+			void goto(here, { shallow: true, replace: true });
 			this.hash = '';
 		}
 	}

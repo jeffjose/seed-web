@@ -1,4 +1,4 @@
-import type { IconName } from '$lib/icons';
+import type { IconName } from '#lib/icons.js';
 
 /**
  * The places in the app, said once: the sidebar lists them, the search over

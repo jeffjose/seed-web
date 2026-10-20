@@ -1,6 +1,6 @@
 <script lang="ts">
-	import * as Popover from '$lib/components/ui/popover';
-	import { Icon } from '$lib/icon';
+	import * as Popover from '#lib/components/ui/popover/index.js';
+	import { Icon } from '#lib/icon.js';
 	import type { Snippet } from 'svelte';
 
 	/**

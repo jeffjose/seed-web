@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { IconName } from '$lib/icons';
+	import type { IconName } from '#lib/icons.js';
 
 	/**
 	 * `<Icon name="panel-left" />`. The name is typed against the map, so a

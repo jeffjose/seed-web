@@ -1,7 +1,7 @@
 import { goto } from '$app/navigation';
 import { toast } from 'svelte-sonner';
-import type { IconName } from '$lib/icons';
-import type { Place } from '$lib/nav';
+import type { IconName } from '#lib/icons.js';
+import type { Place } from '#lib/nav.js';
 
 /**
  * What can be done to a thing: said once, as a list, so that the menu under

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { Icon } from '$lib/icon';
-	import MoreInfo from '$lib/components/more-info.svelte';
-	import type { IconName } from '$lib/icons';
+	import { Icon } from '#lib/icon.js';
+	import MoreInfo from '#lib/components/more-info.svelte';
+	import type { IconName } from '#lib/icons.js';
 
 	/**
 	 * One setting: what it is called and, under that, what it does, with the

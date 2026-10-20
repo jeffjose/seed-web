@@ -1,7 +1,7 @@
 <script lang="ts">
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import { Icon } from '$lib/icon';
-	import type { Entry } from '$lib/menus';
+	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
+	import { Icon } from '#lib/icon.js';
+	import type { Entry } from '#lib/menus.js';
 	import MenuList from './menu-list.svelte';
 
 	/** The same list as the menu under the right button (`right-click.svelte`), for inside a menu that drops from a button. */

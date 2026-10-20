@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Inspector from '$lib/components/inspector.svelte';
-	import { ui } from '$lib/ui.svelte';
+	import Inspector from '#lib/components/inspector.svelte';
+	import { ui } from '#lib/ui.svelte.js';
 	import type { Snippet } from 'svelte';
 
 	/**

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	import { ui } from '$lib/ui.svelte';
+	import { ui } from '#lib/ui.svelte.js';
 
 	/**
 	 * The foot of Settings while anything in it is unsaved, in whichever

@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import * as Command from '$lib/components/ui/command';
-	import * as Dialog from '$lib/components/ui/dialog';
-	import * as Sidebar from '$lib/components/ui/sidebar';
-	import { Icon } from '$lib/icon';
-	import type { IconName } from '$lib/icons';
-	import { ACTION, PLACES } from '$lib/nav';
-	import { ui, appearance, SETTINGS_SECTIONS, MODES, LOOKS } from '$lib/ui.svelte';
+	import * as Command from '#lib/components/ui/command/index.js';
+	import * as Dialog from '#lib/components/ui/dialog/index.js';
+	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
+	import { Icon } from '#lib/icon.js';
+	import type { IconName } from '#lib/icons.js';
+	import { ACTION, PLACES } from '#lib/nav.js';
+	import { ui, appearance, SETTINGS_SECTIONS, MODES, LOOKS } from '#lib/ui.svelte.js';
 
 	/**
 	 * Going anywhere, from anywhere: ⌘K (or the search box in the sidebar),

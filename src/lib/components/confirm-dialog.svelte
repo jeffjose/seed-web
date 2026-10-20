@@ -1,6 +1,6 @@
 <script lang="ts">
-	import * as AlertDialog from '$lib/components/ui/alert-dialog';
-	import { ui } from '$lib/ui.svelte';
+	import * as AlertDialog from '#lib/components/ui/alert-dialog/index.js';
+	import { ui } from '#lib/ui.svelte.js';
 
 	/**
 	 * The app's one "are you sure": asked with `ui.confirm(...)`, answered here.

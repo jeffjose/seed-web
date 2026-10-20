@@ -3,13 +3,17 @@
 A personal starting point for web apps: an empty app shell with the layout,
 type and color already decided. Copy it, rename it, and put pages in it.
 
-SvelteKit 2 · Svelte 5 (runes) · Tailwind v4 · shadcn-svelte on bits-ui ·
-Solar icons · pnpm. Client-rendered (`ssr = false`), built with adapter-node.
+SvelteKit 3 · Svelte 5 (runes) · Vite 8 · Tailwind v4 · shadcn-svelte on
+bits-ui · Solar icons · pnpm. Client-rendered (`ssr = false`), built with
+adapter-node. SvelteKit is configured in `vite.config.ts`, and `src/lib` is
+imported as `#lib/…` (with the extension: `#lib/nav.js`, `#lib/ui.svelte.js`,
+`#lib/components/empty.svelte`).
 
 ```sh
 pnpm install
-pnpm dev      # http://localhost:5173
-pnpm check    # svelte-check
+pnpm dev          # http://localhost:5173
+pnpm check        # tsrs, through svelte-check-native: fast
+pnpm check:slow   # the stock svelte-check: run it before calling anything done
 pnpm build
 ```
 

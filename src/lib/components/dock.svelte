@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Empty from '$lib/components/empty.svelte';
-	import { Icon } from '$lib/icon';
-	import { ui } from '$lib/ui.svelte';
+	import Empty from '#lib/components/empty.svelte';
+	import { Icon } from '#lib/icon.js';
+	import { ui } from '#lib/ui.svelte.js';
 
 	/**
 	 * The dock under the page: it is under the middle and the pane beside it

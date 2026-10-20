@@ -1,12 +1,12 @@
 <script lang="ts">
-	import * as Dialog from '$lib/components/ui/dialog';
-	import SaveBar from '$lib/components/save-bar.svelte';
-	import AppearancePanel from '$lib/components/appearance-panel.svelte';
-	import SettingGroup from '$lib/components/setting-group.svelte';
-	import Empty from '$lib/components/empty.svelte';
-	import { Icon } from '$lib/icon';
-	import { ui, SETTINGS_GROUPS, SETTINGS_SECTIONS, type SettingsSection } from '$lib/ui.svelte';
-	import { HEADING } from '$lib/styles';
+	import * as Dialog from '#lib/components/ui/dialog/index.js';
+	import SaveBar from '#lib/components/save-bar.svelte';
+	import AppearancePanel from '#lib/components/appearance-panel.svelte';
+	import SettingGroup from '#lib/components/setting-group.svelte';
+	import Empty from '#lib/components/empty.svelte';
+	import { Icon } from '#lib/icon.js';
+	import { ui, SETTINGS_GROUPS, SETTINGS_SECTIONS, type SettingsSection } from '#lib/ui.svelte.js';
+	import { HEADING } from '#lib/styles.js';
 
 	/**
 	 * Settings: what is true of the app as a whole. It is not a place you go

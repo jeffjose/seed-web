@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Icon } from '$lib/icon';
-	import { ui } from '$lib/ui.svelte';
-	import * as Sidebar from '$lib/components/ui/sidebar';
+	import { Icon } from '#lib/icon.js';
+	import { ui } from '#lib/ui.svelte.js';
+	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
 
 	/**
 	 * The one button that folds the sidebar away and brings it back. It is

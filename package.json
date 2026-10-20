@@ -15,8 +15,8 @@
 	},
 	"devDependencies": {
 		"@lucide/svelte": "^1.59.0",
-		"@sveltejs/adapter-node": "^5.5.7",
-		"@sveltejs/kit": "^2.70.3",
+		"@sveltejs/adapter-node": "^6.0.0",
+		"@sveltejs/kit": "^3.1.0",
 		"@sveltejs/vite-plugin-svelte": "^7.3.1",
 		"@tailwindcss/vite": "^4.3.3",
 		"@types/node": "^26.6.5",
@@ -38,5 +38,9 @@
 		"@fontsource-variable/geist": "^5.3.0",
 		"@radix-ui/colors": "^3.0.0"
 	},
-	"packageManager": "pnpm@12.4.2"
+	"packageManager": "pnpm@12.4.2",
+	"imports": {
+		"#lib": "./src/lib/index.js",
+		"#lib/*": "./src/lib/*"
+	}
 }

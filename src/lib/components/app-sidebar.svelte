@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import * as Sidebar from '$lib/components/ui/sidebar';
-	import SidebarShell from '$lib/components/sidebar-shell.svelte';
-	import { Icon } from '$lib/icon';
+	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
+	import SidebarShell from '#lib/components/sidebar-shell.svelte';
+	import { Icon } from '#lib/icon.js';
 	import { mergeProps } from 'bits-ui';
-	import RightClick from '$lib/components/right-click.svelte';
-	import { ACTION, PLACES, isAt } from '$lib/nav';
-	import { placeMenu } from '$lib/menus';
-	import { ui } from '$lib/ui.svelte';
+	import RightClick from '#lib/components/right-click.svelte';
+	import { ACTION, PLACES, isAt } from '#lib/nav.js';
+	import { placeMenu } from '#lib/menus.js';
+	import { ui } from '#lib/ui.svelte.js';
 </script>
 
 <SidebarShell>

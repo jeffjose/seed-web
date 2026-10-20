@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { ContextMenu } from 'bits-ui';
 	import type { Snippet } from 'svelte';
-	import { Icon } from '$lib/icon';
-	import type { Entry } from '$lib/menus';
+	import { Icon } from '#lib/icon.js';
+	import type { Entry } from '#lib/menus.js';
 
 	/**
 	 * A menu under the right button, on whatever is given: what can be done to

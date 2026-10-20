@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import * as Popover from '$lib/components/ui/popover';
-	import { Icon } from '$lib/icon';
+	import * as Popover from '#lib/components/ui/popover/index.js';
+	import { Icon } from '#lib/icon.js';
 
 	/**
 	 * More about something, for whoever wants it: a small (i) beside the

@@ -2,18 +2,18 @@
 	import '@fontsource-variable/geist';
 	import '@fontsource-variable/fira-code';
 	import '../app.css';
-	import * as Sidebar from '$lib/components/ui/sidebar';
-	import AppSidebar from '$lib/components/app-sidebar.svelte';
-	import SidebarToggle from '$lib/components/sidebar-toggle.svelte';
-	import Dock from '$lib/components/dock.svelte';
-	import ConfirmDialog from '$lib/components/confirm-dialog.svelte';
-	import SettingsDialog from '$lib/components/settings-dialog.svelte';
-	import CommandPalette from '$lib/components/command-palette.svelte';
-	import Tooltips from '$lib/components/tooltips.svelte';
-	import { Toaster } from '$lib/components/ui/sonner';
-	import { PALETTE_CSS } from '$lib/palette';
-	import { SPRITE } from '$lib/icons';
-	import { ui } from '$lib/ui.svelte';
+	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
+	import AppSidebar from '#lib/components/app-sidebar.svelte';
+	import SidebarToggle from '#lib/components/sidebar-toggle.svelte';
+	import Dock from '#lib/components/dock.svelte';
+	import ConfirmDialog from '#lib/components/confirm-dialog.svelte';
+	import SettingsDialog from '#lib/components/settings-dialog.svelte';
+	import CommandPalette from '#lib/components/command-palette.svelte';
+	import Tooltips from '#lib/components/tooltips.svelte';
+	import { Toaster } from '#lib/components/ui/sonner/index.js';
+	import { PALETTE_CSS } from '#lib/palette.js';
+	import { SPRITE } from '#lib/icons.js';
+	import { ui } from '#lib/ui.svelte.js';
 	import { onMount } from 'svelte';
 	import { navigating } from '$app/state';
 
@@ -62,7 +62,7 @@
 	}}
 />
 
-<!-- The drawing of every icon, once: each icon on the page points at its drawing here (`$lib/icons`). -->
+<!-- The drawing of every icon, once: each icon on the page points at its drawing here (`#lib/icons.js`). -->
 <svg aria-hidden="true" width="0" height="0" class="absolute">{@html SPRITE}</svg>
 
 <Sidebar.Provider bind:open={sidebarOpen} style="--sidebar-width: {ui.sidebarWidth}px;" class="h-svh overflow-hidden">

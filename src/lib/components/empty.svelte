@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { Icon, type IconName } from '$lib/icon';
+	import { Icon, type IconName } from '#lib/icon.js';
 
 	/**
 	 * Somewhere with nothing in it, said the one way everywhere: an icon, and

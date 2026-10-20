@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import * as Sidebar from '$lib/components/ui/sidebar';
-	import Pane from '$lib/components/pane.svelte';
-	import Empty from '$lib/components/empty.svelte';
-	import { Icon, type IconName } from '$lib/icon';
-	import { ui } from '$lib/ui.svelte';
-	import { TITLE } from '$lib/styles';
+	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
+	import Pane from '#lib/components/pane.svelte';
+	import Empty from '#lib/components/empty.svelte';
+	import { Icon, type IconName } from '#lib/icon.js';
+	import { ui } from '#lib/ui.svelte.js';
+	import { TITLE } from '#lib/styles.js';
 
 	/**
 	 * A page of the app as the shell has it: the middle under a header bar

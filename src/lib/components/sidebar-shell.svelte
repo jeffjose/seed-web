@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition';
-	import * as Sidebar from '$lib/components/ui/sidebar';
-	import { ui } from '$lib/ui.svelte';
+	import * as Sidebar from '#lib/components/ui/sidebar/index.js';
+	import { ui } from '#lib/ui.svelte.js';
 	import type { ComponentProps, Snippet } from 'svelte';
 
 	/**

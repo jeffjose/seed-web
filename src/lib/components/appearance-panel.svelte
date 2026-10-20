@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
-	import SettingGroup from '$lib/components/setting-group.svelte';
-	import SettingRow from '$lib/components/setting-row.svelte';
-	import { Icon } from '$lib/icon';
-	import { ui, appearance, MODES, LOOKS, type Mode, type Look } from '$lib/ui.svelte';
-	import { SEG, SEG_ITEM, SEG_ON, SEG_OFF } from '$lib/seg';
-	import { FONTS, fontOf } from '$lib/fonts';
-	import * as Select from '$lib/components/ui/select';
-	import { Button } from '$lib/components/ui/button';
+	import SettingGroup from '#lib/components/setting-group.svelte';
+	import SettingRow from '#lib/components/setting-row.svelte';
+	import { Icon } from '#lib/icon.js';
+	import { ui, appearance, MODES, LOOKS, type Mode, type Look } from '#lib/ui.svelte.js';
+	import { SEG, SEG_ITEM, SEG_ON, SEG_OFF } from '#lib/seg.js';
+	import { FONTS, fontOf } from '#lib/fonts.js';
+	import * as Select from '#lib/components/ui/select/index.js';
+	import { Button } from '#lib/components/ui/button/index.js';
 
 	/**
 	 * How the app looks on this machine: light or dark, in which look, and in

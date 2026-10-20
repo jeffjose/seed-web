@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { ASIDE } from '$lib/styles';
+	import { ASIDE } from '#lib/styles.js';
 
 	/**
 	 * A page that is not a conversation. There is no bar across the top: the

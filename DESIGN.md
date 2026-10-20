@@ -55,7 +55,7 @@ These are the ideas the specific choices keep coming back to.
 
 | Part | Choice | Notes |
 |---|---|---|
-| Framework | SvelteKit 2, Svelte 5 (runes), Vite 7, TypeScript | Client-rendered (`ssr = false`), `adapter-node` |
+| Framework | SvelteKit 3, Svelte 5 (runes), Vite 8, TypeScript | Client-rendered (`ssr = false`), `adapter-node`. Configured in `vite.config.ts` (there is no `svelte.config.js`); `src/lib` is imported as `#lib/…`, with the file's extension. Types are checked by tsrs behind `svelte-check-native` (`pnpm check`), and by the stock `svelte-check` (`pnpm check:slow`) |
 | CSS | Tailwind 4 via `@tailwindcss/vite` | No config file. Tokens are in `@theme inline` in `src/app.css` |
 | Primitives | shadcn-svelte on bits-ui 2 | Vendored in `src/lib/components/ui/`. Right-click menus use bits-ui `ContextMenu` directly |
 | Icons | Solar (CC BY 4.0), copied from `@iconify-json/solar` | See [Icons](#6-icons). `@lucide/svelte` survives only inside stock `ui/` parts |
