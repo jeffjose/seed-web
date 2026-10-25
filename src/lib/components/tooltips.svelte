@@ -10,14 +10,19 @@
 	 * type, the same surface as a menu, above the thing it is about.
 	 *
 	 * There are two sizes, and which is not chosen where the hint is written:
-	 * a thing with no words on it gets the larger one, at once; a thing with
-	 * words gets the smaller, after a pause.
+	 * a thing with no words on it gets the larger one; a thing with words the
+	 * smaller. Both wait a beat, so a pointer crossing the page sets nothing
+	 * off; once one is up, the next comes at once.
 	 *
 	 * One listener on the document rather than a wrapper per button: there are
 	 * a hundred of these, and a hundred components to say "this has a hint"
 	 * would be a hundred places to forget.
 	 */
 	let text = $state('');
+	/** A shortcut written last in parentheses, "Close (Esc)", drawn as a key. */
+	let key = $state('');
+	/** All the hint said was the control's own words and its key: only the key is shown. */
+	let solo = $state(false);
 	let x = $state(0);
 	let y = $state(0);
 	let below = $state(false);
@@ -28,9 +33,21 @@
 	let shown = $state(false);
 	let bubble = $state<HTMLElement | null>(null);
 
-	const WAIT = 350;
+	/** How long the pointer rests on a thing before its hint: long enough that passing over one says nothing. */
+	const WAIT = 500;
+	/** After a hint goes because the pointer left, how long the next one comes without the wait: running along a row. */
+	const WARM = 300;
 	let timer: ReturnType<typeof setTimeout> | undefined;
 	let target: Element | null = null;
+	let warmUntil = 0;
+
+	/** The words, and the key at the end of them if there is one. */
+	function say(el: Element, tip: string) {
+		const m = /^(.*\S)\s*\(([^()]{1,16})\)$/.exec(tip);
+		const own = el.textContent?.trim().toLowerCase() ?? '';
+		[text, key] = m ? [m[1], m[2]] : [tip, ''];
+		solo = !!m && !!own && m[1].toLowerCase() === own;
+	}
 	/**
 	 * What has just been pressed: its hint has been read, and is not said again
 	 * until the pointer has been away and come back. Pressing a thing often
@@ -42,6 +59,7 @@
 
 	function press(e: Event) {
 		pressed = target ?? (e.target as Element | null)?.closest?.('[data-tip]') ?? null;
+		warmUntil = 0;
 		hide();
 	}
 
@@ -90,28 +108,37 @@
 		const tip = el?.getAttribute('data-tip')?.trim();
 		if (group && el && tip) {
 			clearTimeout(timer);
-			[target, text, beside, name, shown] = [el, tip, true, true, true];
+			[target, beside, name, shown] = [el, true, true, true];
+			say(el, tip);
 			void tick().then(place);
 			return;
 		}
-		hide();
-		if (!el || !tip) return;
+		// One is up, or was a moment ago: the pointer is running along a row, and the next one is said at once.
+		const warm = shown || performance.now() < warmUntil;
+		if (!el || !tip) return hide();
+		clearTimeout(timer);
 		beside = false;
-		// Nothing written on it: the hint is its label, and a label does not keep you waiting.
-		// (One with words on it says what it is already; its hint is an aside, small and after a pause.)
+		// Nothing written on it: the hint is its label, larger. (One with words on it says what it is already; its
+		// hint is an aside, small.) Both wait: a name that comes at once flashes at everything the pointer crosses.
 		name = !el.textContent?.trim();
-		if (name) {
-			[target, text, shown] = [el, tip, true];
-			void tick().then(place);
-			return;
-		}
 		target = el;
-		timer = setTimeout(() => {
-			text = tip;
+		const show = () => {
+			say(el, tip);
 			shown = true;
 			// Measured once it has its text, then put in place.
-			requestAnimationFrame(place);
-		}, WAIT);
+			void tick().then(place);
+		};
+		if (warm) show();
+		else {
+			if (shown) shown = false;
+			timer = setTimeout(show, WAIT);
+		}
+	}
+
+	/** Pressed, a key, a scroll: the next hint waits again. */
+	function stop() {
+		warmUntil = 0;
+		hide();
 	}
 
 	onMount(() => {
@@ -123,6 +150,9 @@
 			// (Still within its group: it stays, until the next thing says otherwise.)
 			const group = target.closest('[data-tip-group]');
 			if (group && shown && to && group.contains(to)) return;
+			// Straight onto the next thing with a hint: it is changed there, not hidden and brought back.
+			if (shown && to?.closest?.('[data-tip]')?.getAttribute('data-tip')?.trim()) return;
+			if (shown) warmUntil = performance.now() + WARM;
 			hide();
 		};
 		document.addEventListener('pointerover', over);
@@ -131,16 +161,16 @@
 		document.addEventListener('focusout', hide);
 		// A hint is for before you act, not during.
 		document.addEventListener('pointerdown', press, true);
-		document.addEventListener('keydown', hide, true);
-		window.addEventListener('scroll', hide, true);
+		document.addEventListener('keydown', stop, true);
+		window.addEventListener('scroll', stop, true);
 		return () => {
 			document.removeEventListener('pointerover', over);
 			document.removeEventListener('pointerout', out);
 			document.removeEventListener('focusin', over);
 			document.removeEventListener('focusout', hide);
 			document.removeEventListener('pointerdown', press, true);
-			document.removeEventListener('keydown', hide, true);
-			window.removeEventListener('scroll', hide, true);
+			document.removeEventListener('keydown', stop, true);
+			window.removeEventListener('scroll', stop, true);
 		};
 	});
 </script>
@@ -149,9 +179,12 @@
 	<div
 		bind:this={bubble}
 		role="tooltip"
-		class="tip-in pointer-events-none fixed z-[100] w-max max-w-64 font-medium leading-snug shadow-lg {name ? 'rounded-lg px-3 py-2 text-[13.5px] font-semibold' : 'rounded-md px-2.5 py-1.5 text-[12px]'}"
+		class="tip-in pointer-events-none fixed z-[100] w-max max-w-64 font-medium leading-snug shadow-lg {solo ? 'rounded-md p-1' : name ? 'rounded-lg px-3 py-2 text-[13.5px] font-semibold' : 'rounded-md px-2.5 py-1.5 text-[12px]'}"
 		style="left: {x}px; top: {y}px; background: oklch(0.2 0.006 286); color: oklch(0.96 0.003 286); box-shadow: 0 0 0 1px oklch(1 0 0 / 0.1), 0 8px 24px -8px oklch(0 0 0 / 0.6)"
 	>
-		{text}
+		{#if !solo}{text}{/if}{#if key}<kbd
+				class="inline-grid h-[18px] min-w-[18px] place-items-center rounded px-1 align-[1px] text-[11px] font-medium {solo ? '' : 'ml-1.5'}"
+				style="background: oklch(1 0 0 / 0.1); color: oklch(0.85 0.005 286); box-shadow: inset 0 -1px 0 oklch(0 0 0 / 0.35)">{key}</kbd
+			>{/if}
 	</div>
 {/if}

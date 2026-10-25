@@ -443,12 +443,31 @@ hundred places to forget."
 | | A control with no text (an icon, a swatch) | A control with text |
 |---|---|---|
 | What the hint is | Its label | An aside |
-| When | At once | After a pause |
+| When | After 500ms | After 500ms |
 | Style | `rounded-lg px-3 py-2 text-[13.5px] font-semibold` | `rounded-md px-2.5 py-1.5 text-[12px] font-medium` |
 
 The test is `!el.textContent.trim()`. Nothing is opted in where the hint is
-written, so a new icon button gets the large, immediate one by default.
-"Without it you are guessing."
+written, so a new icon button gets the large one by default. "Without it you
+are guessing."
+
+### When it comes
+
+- **After the pointer rests, 500ms, for both sizes.** The icon's name used to
+  come at once; in graphprix the fold button in the corner then flashed its
+  hint at every pass of the pointer on the way to the page, and "we see the
+  tooltip immediately, which is kinda weird." A pointer crossing the page sets
+  nothing off.
+- **Once one is up, the next comes at once.** Moving straight from one control
+  onto the next changes what the hint says and where it stands, without hiding
+  it; over a gap, the next one within 300ms still skips the wait. That is
+  someone running along a row of buttons reading them, and the wait was only
+  there to tell them from someone passing by.
+- **A press, a key or a scroll makes the next one wait again.**
+- **A group (`data-tip-group`) is at once**, as below: a rail of icons is read
+  by going down it.
+- An app with hints on marks in a chart may give those a much shorter wait
+  (graphprix: 120ms), since a chart is read by sweeping across it; not the
+  seed's, which has no charts.
 
 ### Placement
 
@@ -476,7 +495,13 @@ written, so a new icon button gets the large, immediate one by default.
 
 - An icon-only control's hint is its **name**: "Refresh", "Close". Status may
   follow: "Refresh · checked 2 min ago".
-- A shortcut goes in parentheses: "Close (Esc)".
+- A shortcut goes last, in parentheses: "Close (Esc)". The layer draws it as
+  a key (`kbd`, a faint chip after the words), so it is not read as part of
+  the sentence. Up to 16 characters and no parentheses inside, or it stays
+  words.
+- **Where the words only repeat the control's own, just the key is shown.** A
+  button that says "Pitwall" with the hint "Pitwall (P)" gets a bare `P`
+  chip: the name is already on the button.
 - Every icon-only control should have one.
 
 ---
@@ -756,7 +781,9 @@ Worth knowing so they are not tried again.
 | Solar line icons at 1.5, then 1.75 | Thinner than the text beside them |
 | Solar Bold as the "heavier" icon | Filled; a different look from a line icon |
 | The browser's `title` tooltips | Late, in the system's font, placed anywhere |
-| One tooltip size and delay for everything | An icon's hint is its name and cannot wait; a word's is an aside |
+| One tooltip size for everything | An icon's hint is its name; a word's is an aside |
+| An icon's hint at once | Flashed at every pass of the pointer. 500ms, and at once only after one is up |
+| A shortcut written into the sentence | Read as words. Drawn as a key, and alone where the rest repeats the button |
 | A tooltip returning after each press | Blinked on every click of refresh or an arrow |
 | `tw-animate-css` zoom-in on everything | One small block of CSS, by what the thing is |
 | Expanding a long list inside a fixed pane | Pushed what was under it down. A flyout to the side |
